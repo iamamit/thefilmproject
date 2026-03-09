@@ -1,0 +1,13 @@
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/AuthController.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/AuthService.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/Connection.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/ConnectionController.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/ConnectionRepository.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/CorsConfig.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtAuthFilter.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtUtil.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/SecurityConfig.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/TheFilmProjectApplication.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/User.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/UserController.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/UserRepository.java
