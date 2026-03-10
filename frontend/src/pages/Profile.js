@@ -93,7 +93,7 @@ function Profile() {
           )}
 
           {isMyProfile && (
-            <p style={{ color: '#888', fontSize: '0.9rem' }}>This is your profile</p>
+            <p style={{ color: '#888', fontSize: '0.9rem' }}><><button onClick={() => window.location.href="/edit-profile"} style={{ background: "#4a90e2", color: "#fff", border: "none", padding: "0.6rem 1.5rem", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem" }}>✏️ Edit Profile</button></></p>
           )}
         </div>
 
