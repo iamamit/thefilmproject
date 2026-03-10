@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://stunning-fishstick-9qqgjp5wrg9hp447-8080.app.github.dev/api',
+  baseURL: '/api',
 });
 
 api.interceptors.request.use((config) => {
