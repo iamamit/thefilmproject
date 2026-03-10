@@ -4,6 +4,7 @@
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/ConnectionController.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/ConnectionRepository.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/CorsConfig.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/FrontendController.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtAuthFilter.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtUtil.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/SecurityConfig.java

@@ -9,6 +9,7 @@ com/thefilmproject/AuthController.class
 com/thefilmproject/SecurityConfig.class
 com/thefilmproject/AuthService.class
 com/thefilmproject/User.class
+com/thefilmproject/FrontendController.class
 com/thefilmproject/UserController.class
 com/thefilmproject/AuthService$RegisterRequest.class
 com/thefilmproject/AuthService$AuthResponse.class
