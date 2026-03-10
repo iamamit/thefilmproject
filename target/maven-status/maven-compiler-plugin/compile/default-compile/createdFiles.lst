@@ -1,11 +1,14 @@
 com/thefilmproject/ConnectionController.class
 com/thefilmproject/User$Builder.class
+com/thefilmproject/SkillController.class
 com/thefilmproject/UserRepository.class
 com/thefilmproject/JwtAuthFilter.class
 com/thefilmproject/JwtUtil.class
 com/thefilmproject/AuthService$LoginRequest.class
 com/thefilmproject/TheFilmProjectApplication.class
 com/thefilmproject/AuthController.class
+com/thefilmproject/UserSkillRepository.class
+com/thefilmproject/UserSkill.class
 com/thefilmproject/SecurityConfig.class
 com/thefilmproject/AuthService.class
 com/thefilmproject/User.class

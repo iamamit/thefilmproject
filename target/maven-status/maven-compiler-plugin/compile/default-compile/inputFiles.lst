@@ -8,7 +8,10 @@
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtAuthFilter.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/JwtUtil.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/SecurityConfig.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/SkillController.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/TheFilmProjectApplication.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/User.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/UserController.java
 /workspaces/thefilmproject/src/main/java/com/thefilmproject/UserRepository.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/UserSkill.java
+/workspaces/thefilmproject/src/main/java/com/thefilmproject/UserSkillRepository.java
