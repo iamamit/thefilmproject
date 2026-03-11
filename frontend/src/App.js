@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
+import Messages from './pages/Messages';
 import Navbar from './components/Navbar';
 
 const PrivateRoute = ({ children }) => {
@@ -24,6 +25,12 @@ function App() {
         } />
         <Route path="/edit-profile" element={
           <PrivateRoute><EditProfile /></PrivateRoute>
+        } />
+        <Route path="/messages" element={
+          <PrivateRoute><Messages /></PrivateRoute>
+        } />
+        <Route path="/messages/:username" element={
+          <PrivateRoute><Messages /></PrivateRoute>
         } />
         <Route path="/" element={<Navigate to="/discover" />} />
       </Routes>
