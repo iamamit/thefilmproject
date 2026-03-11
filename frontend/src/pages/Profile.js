@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 
 function Profile() {
   const { username } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
   const [message, setMessage] = useState('');
+  const [skills, setSkills] = useState([]);
   const myUsername = localStorage.getItem('username');
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await api.get(`/users/${username}`);
-        setUser(res.data);
+        const [userRes, skillsRes] = await Promise.all([
+          api.get(`/users/${username}`),
+          api.get(`/skills/user/${username}`)
+        ]);
+        setUser(userRes.data);
+        setSkills(skillsRes.data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -40,6 +46,7 @@ function Profile() {
   if (!user) return <div style={{ background: '#0f0f1a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: '#888' }}>User not found</p></div>;
 
   const isMyProfile = myUsername === username;
+  const levelColors = { BEGINNER: '#4a90e2', INTERMEDIATE: '#f5a623', EXPERT: '#4caf50' };
 
   return (
     <div style={{ background: '#0f0f1a', minHeight: '100vh', padding: '2rem' }}>
@@ -64,7 +71,6 @@ function Profile() {
 
           {user.bio && <p style={{ color: '#aaa', marginBottom: '1rem' }}>{user.bio}</p>}
 
-          {/* Roles */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
             {user.roles?.map(role => (
               <span key={role} style={{
@@ -78,9 +84,14 @@ function Profile() {
             <p style={{ color: '#4caf50', fontSize: '0.9rem', marginBottom: '1rem' }}>✅ Available for work</p>
           )}
 
-          {/* Connect button */}
-          {!isMyProfile && (
-            <div>
+          {isMyProfile ? (
+            <button onClick={() => navigate('/edit-profile')} style={{
+              background: '#4a90e2', color: '#fff', border: 'none',
+              padding: '0.6rem 1.5rem', borderRadius: '8px',
+              cursor: 'pointer', fontWeight: 'bold', fontSize: '0.95rem'
+            }}>✏️ Edit Profile</button>
+          ) : (
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <button onClick={sendConnection} disabled={connecting} style={{
                 background: '#e94560', color: '#fff', border: 'none',
                 padding: '0.6rem 1.5rem', borderRadius: '8px',
@@ -88,14 +99,36 @@ function Profile() {
               }}>
                 {connecting ? 'Sending...' : '🤝 Connect'}
               </button>
-              {message && <p style={{ color: '#4caf50', marginTop: '0.5rem', fontSize: '0.9rem' }}>{message}</p>}
+              <button onClick={() => navigate(`/messages?user=${user.id}&name=${user.fullName}`)} style={{
+                background: '#2a2a4a', color: '#fff', border: '1px solid #4a90e2',
+                padding: '0.6rem 1.5rem', borderRadius: '8px',
+                cursor: 'pointer', fontWeight: 'bold', fontSize: '0.95rem'
+              }}>
+                💬 Message
+              </button>
             </div>
           )}
-
-          {isMyProfile && (
-            <p style={{ color: '#888', fontSize: '0.9rem' }}><><button onClick={() => window.location.href="/edit-profile"} style={{ background: "#4a90e2", color: "#fff", border: "none", padding: "0.6rem 1.5rem", borderRadius: "8px", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem" }}>✏️ Edit Profile</button></></p>
-          )}
+          {message && <p style={{ color: '#4caf50', marginTop: '0.5rem', fontSize: '0.9rem' }}>{message}</p>}
         </div>
+
+        {/* Skills */}
+        {skills.length > 0 && (
+          <div style={{ background: '#1a1a2e', borderRadius: '16px', padding: '1.5rem', marginBottom: '1.5rem', border: '1px solid #2a2a4a' }}>
+            <h3 style={{ color: '#fff', marginBottom: '1rem' }}>Skills & Tools</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {skills.map(skill => (
+                <div key={skill.id} style={{
+                  background: '#0f0f1a', border: `1px solid ${levelColors[skill.level] || '#444'}`,
+                  borderRadius: '20px', padding: '0.3rem 0.8rem',
+                  display: 'flex', alignItems: 'center', gap: '0.5rem'
+                }}>
+                  <span style={{ color: '#fff', fontSize: '0.85rem' }}>{skill.name}</span>
+                  <span style={{ color: levelColors[skill.level], fontSize: '0.75rem' }}>{skill.level}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Languages */}
         {user.languages?.length > 0 && (
@@ -112,7 +145,6 @@ function Profile() {
           </div>
         )}
 
-        {/* Member since */}
         <div style={{ background: '#1a1a2e', borderRadius: '16px', padding: '1.5rem', border: '1px solid #2a2a4a' }}>
           <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>
             Member since {new Date(user.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' })}

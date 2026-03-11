@@ -7,6 +7,9 @@
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/FrontendController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/JwtAuthFilter.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/JwtUtil.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Message.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageController.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageRepository.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/SecurityConfig.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/SkillController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/TheFilmProjectApplication.java

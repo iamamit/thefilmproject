@@ -30,6 +30,7 @@ function Navbar() {
         <Link to="/discover" style={{ color: '#fff', textDecoration: 'none' }}>Discover</Link>
         {token ? (
           <>
+            <Link to="/messages" style={{ color: '#fff', textDecoration: 'none' }}>💬 Messages</Link>
             <Link to={`/profile/${username}`} style={{ color: '#fff', textDecoration: 'none' }}>My Profile</Link>
             <button onClick={logout} style={{
               background: '#e94560', color: '#fff', border: 'none',
