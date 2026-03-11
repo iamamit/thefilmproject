@@ -4,9 +4,8 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'https://stunning-fishstick-9qqgjp5wrg9hp447-8080.app.github.dev',
+      target: 'http://localhost:8080',
       changeOrigin: true,
-      secure: false,
     })
   );
 };
