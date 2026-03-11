@@ -5,6 +5,7 @@ import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import Messages from './pages/Messages';
+import Connections from './pages/Connections';
 import Navbar from './components/Navbar';
 
 const PrivateRoute = ({ children }) => {
@@ -29,8 +30,8 @@ function App() {
         <Route path="/messages" element={
           <PrivateRoute><Messages /></PrivateRoute>
         } />
-        <Route path="/messages/:username" element={
-          <PrivateRoute><Messages /></PrivateRoute>
+        <Route path="/connections" element={
+          <PrivateRoute><Connections /></PrivateRoute>
         } />
         <Route path="/" element={<Navigate to="/discover" />} />
       </Routes>
