@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -59,7 +59,17 @@ public class MessageController {
     @GetMapping("/inbox")
     public List<Message> getInbox(Authentication auth) {
         User me = userRepo.findByEmail(auth.getName()).orElseThrow();
-        return messageRepo.findInbox(me.getId());
+        List<Message> allMessages = messageRepo.findAllByUser(me.getId());
+        
+        // Get latest message per conversation
+        Map<Long, Message> latestPerConversation = new LinkedHashMap<>();
+        for (Message m : allMessages) {
+            Long otherId = m.getSender().getId().equals(me.getId()) 
+                ? m.getReceiver().getId() 
+                : m.getSender().getId();
+            latestPerConversation.putIfAbsent(otherId, m);
+        }
+        return new ArrayList<>(latestPerConversation.values());
     }
 
     @GetMapping("/unread")
