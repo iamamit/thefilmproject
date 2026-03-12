@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 const roleColors = {
-  DIRECTOR: 'var(--accent)', EDITOR: '#4a90e2', MUSICIAN: '#9b59b6',
+  DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
   PRODUCER: '#f39c12', ACTOR: '#1abc9c', CINEMATOGRAPHER: '#e67e22',
   VFX_ARTIST: '#3498db', WRITER: '#2ecc71'
 };
@@ -14,6 +14,214 @@ function timeAgo(dateStr) {
   if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommentAdded }) {
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState('');
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+  const navigate = useNavigate();
+  const isLiked = post.likedByUserIds?.includes(myId);
+  const isOwner = post.author?.username === myUsername;
+  const authorColor = roleColors[post.author?.roles?.[0]] || '#0a66c2';
+  const token = localStorage.getItem('token');
+
+  const fetchComments = async () => {
+    setLoadingComments(true);
+    try {
+      const res = await api.get(`/posts/${post.id}/comments`);
+      setComments(res.data);
+      setCommentCount(res.data.length);
+    } catch (err) { console.error(err); }
+    finally { setLoadingComments(false); }
+  };
+
+  const toggleComments = () => {
+    if (!showComments) fetchComments();
+    setShowComments(!showComments);
+  };
+
+  const submitComment = async () => {
+    if (!commentText.trim() || !token) return;
+    try {
+      const res = await api.post(`/posts/${post.id}/comments`, { content: commentText });
+      setComments([...comments, res.data]);
+      setCommentCount(commentCount + 1);
+      setCommentText('');
+    } catch (err) { console.error(err); }
+  };
+
+  const deleteComment = async (commentId) => {
+    try {
+      await api.delete(`/posts/${post.id}/comments/${commentId}`);
+      setComments(comments.filter(c => c.id !== commentId));
+      setCommentCount(commentCount - 1);
+    } catch (err) { console.error(err); }
+  };
+
+  const cardStyle = {
+    background: 'var(--bg-card)', borderRadius: 'var(--radius)',
+    border: '1px solid var(--border)', overflow: 'hidden',
+  };
+
+  return (
+    <div style={cardStyle}>
+      <div style={{ padding: '1rem 1.2rem' }}>
+        {/* Author */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => navigate(`/profile/${post.author?.username}`)}>
+            <div style={{
+              width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
+              background: authorColor, display: 'flex', alignItems: 'center',
+              justifyContent: 'center', fontSize: '1.1rem', fontWeight: 'bold', color: '#fff'
+            }}>{post.author?.fullName?.charAt(0)}</div>
+            <div>
+              <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0, fontSize: '0.95rem' }}>{post.author?.fullName}</p>
+              <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {post.author?.roles?.slice(0, 2).map(role => (
+                  <span key={role} style={{ color: authorColor, fontSize: '0.75rem', fontWeight: '500' }}>
+                    {role.replace('_', ' ')}
+                  </span>
+                ))}
+                {post.author?.city && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>· {post.author.city}</span>}
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>· {timeAgo(post.createdAt)}</span>
+              </div>
+            </div>
+          </div>
+          {isOwner && (
+            <button onClick={() => onDelete(post.id)} style={{
+              background: 'none', border: 'none', color: 'var(--text-muted)',
+              cursor: 'pointer', fontSize: '1rem', padding: '0.2rem 0.5rem',
+            }} title="Delete post">🗑️</button>
+          )}
+        </div>
+
+        {/* Content */}
+        <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', fontSize: '0.95rem', whiteSpace: 'pre-wrap', marginBottom: '0.8rem' }}>
+          {post.content}
+        </p>
+
+        {/* Stats row */}
+        {(post.likedByUserIds?.length > 0 || commentCount > 0) && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem 0', marginBottom: '0.2rem' }}>
+            {post.likedByUserIds?.length > 0 && (
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                ❤️ {post.likedByUserIds.length}
+              </span>
+            )}
+            {commentCount > 0 && (
+              <span onClick={toggleComments} style={{ color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', marginLeft: 'auto' }}>
+                {commentCount} comment{commentCount !== 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.3rem', display: 'flex', gap: '0.2rem' }}>
+          <button onClick={() => onLike(post.id)} style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: isLiked ? 'var(--accent)' : 'var(--text-secondary)',
+            padding: '0.5rem', borderRadius: 'var(--radius-sm)',
+            fontSize: '0.85rem', fontWeight: isLiked ? '600' : '400',
+            transition: 'background 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'none'}
+          >
+            {isLiked ? '👍' : '👍'} Like
+          </button>
+          <button onClick={toggleComments} style={{
+            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: showComments ? 'var(--accent)' : 'var(--text-secondary)',
+            padding: '0.5rem', borderRadius: 'var(--radius-sm)',
+            fontSize: '0.85rem', fontWeight: '400', transition: 'background 0.2s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'none'}
+          >
+            💬 Comment
+          </button>
+        </div>
+      </div>
+
+      {/* Comments Section */}
+      {showComments && (
+        <div style={{ borderTop: '1px solid var(--border)', padding: '0.8rem 1.2rem', background: 'var(--bg-primary)' }}>
+          {loadingComments ? (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading...</p>
+          ) : comments.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.8rem' }}>No comments yet. Be first!</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '0.8rem' }}>
+              {comments.map(comment => (
+                <div key={comment.id} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                  <div style={{
+                    width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                    background: roleColors[comment.author?.roles?.[0]] || '#0a66c2',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.8rem', fontWeight: 'bold', color: '#fff', cursor: 'pointer'
+                  }} onClick={() => navigate(`/profile/${comment.author?.username}`)}>
+                    {comment.author?.fullName?.charAt(0)}
+                  </div>
+                  <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '0 12px 12px 12px', padding: '0.5rem 0.8rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>{comment.author?.fullName}</span>
+                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{timeAgo(comment.createdAt)}</span>
+                        {comment.author?.username === myUsername && (
+                          <button onClick={() => deleteComment(comment.id)} style={{
+                            background: 'none', border: 'none', color: 'var(--text-muted)',
+                            cursor: 'pointer', fontSize: '0.75rem', padding: '0'
+                          }}>🗑️</button>
+                        )}
+                      </div>
+                    </div>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0.2rem 0 0' }}>{comment.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add comment */}
+          {token && (
+            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                background: 'var(--accent)', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
+              }}>{(fullName || myUsername)?.charAt(0).toUpperCase()}</div>
+              <div style={{ flex: 1, display: 'flex', gap: '0.4rem' }}>
+                <input
+                  value={commentText}
+                  onChange={e => setCommentText(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && submitComment()}
+                  placeholder="Add a comment..."
+                  style={{
+                    flex: 1, padding: '0.5rem 0.8rem', borderRadius: '20px',
+                    border: '1px solid var(--border)', background: 'var(--bg-card)',
+                    color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
+                  }}
+                />
+                <button onClick={submitComment} disabled={!commentText.trim()} style={{
+                  background: commentText.trim() ? 'var(--accent)' : 'var(--border)',
+                  color: '#fff', border: 'none', borderRadius: '20px',
+                  padding: '0.4rem 0.8rem', cursor: commentText.trim() ? 'pointer' : 'default',
+                  fontSize: '0.8rem', fontWeight: '600',
+                }}>Post</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function Home() {
@@ -34,11 +242,8 @@ function Home() {
     try {
       const res = await api.get('/posts/feed');
       setPosts(res.data.content);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const submitPost = async () => {
@@ -49,11 +254,8 @@ function Home() {
       setPostContent('');
       setShowPostBox(false);
       fetchFeed();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setPosting(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setPosting(false); }
   };
 
   const toggleLike = async (postId) => {
@@ -92,9 +294,7 @@ function Home() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.4rem', fontWeight: 'bold', color: '#fff',
                   marginTop: '-28px', marginBottom: '0.5rem'
-                }}>
-                  {(fullName || username)?.charAt(0).toUpperCase()}
-                </div>
+                }}>{(fullName || username)?.charAt(0).toUpperCase()}</div>
                 <p style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.95rem' }}>{fullName}</p>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.8rem' }}>@{username}</p>
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -128,8 +328,6 @@ function Home() {
               }}>Sign In</button>
             </div>
           )}
-
-          {/* Quick Links */}
           <div style={{ ...cardStyle, padding: '0.8rem', marginTop: '1rem' }}>
             {[
               { icon: '🧭', label: 'Discover Creators', path: '/discover' },
@@ -141,21 +339,16 @@ function Home() {
                 background: 'none', border: 'none', color: 'var(--text-secondary)',
                 padding: '0.6rem 0.5rem', borderRadius: 'var(--radius-sm)',
                 cursor: 'pointer', fontSize: '0.875rem', textAlign: 'left',
-                transition: 'background 0.2s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}
-              >
-                <span>{icon}</span> {label}
-              </button>
+              ><span>{icon}</span> {label}</button>
             ))}
           </div>
         </div>
 
         {/* Center Feed */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-
-          {/* Create Post Box */}
           {token && (
             <div style={{ ...cardStyle, padding: '1rem' }}>
               <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
@@ -167,24 +360,17 @@ function Home() {
                 <button onClick={() => setShowPostBox(true)} style={{
                   flex: 1, padding: '0.7rem 1rem', borderRadius: '24px',
                   border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                  color: 'var(--text-muted)', fontSize: '0.9rem', cursor: 'text',
-                  textAlign: 'left',
+                  color: 'var(--text-muted)', fontSize: '0.9rem', cursor: 'text', textAlign: 'left',
                 }}>Share something with the film community...</button>
               </div>
-
               {showPostBox && (
                 <div style={{ marginTop: '1rem' }}>
-                  <textarea
-                    value={postContent}
-                    onChange={e => setPostContent(e.target.value)}
-                    placeholder="What's on your mind? Share updates, projects, opportunities..."
-                    autoFocus
-                    rows={4}
+                  <textarea value={postContent} onChange={e => setPostContent(e.target.value)}
+                    placeholder="What's on your mind?" autoFocus rows={4}
                     style={{
                       width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)',
                       border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                      color: 'var(--text-primary)', fontSize: '0.9rem', resize: 'vertical',
-                      fontFamily: 'inherit',
+                      color: 'var(--text-primary)', fontSize: '0.9rem', resize: 'vertical', fontFamily: 'inherit',
                     }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
@@ -201,7 +387,6 @@ function Home() {
                   </div>
                 </div>
               )}
-
               {!showPostBox && (
                 <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid var(--border)' }}>
                   {[['🎬', 'Video'], ['📸', 'Photo'], ['✍️', 'Article']].map(([icon, label]) => (
@@ -210,7 +395,6 @@ function Home() {
                       gap: '0.4rem', background: 'none', border: 'none',
                       color: 'var(--text-secondary)', padding: '0.4rem', borderRadius: 'var(--radius-sm)',
                       cursor: 'pointer', fontSize: '0.85rem', fontWeight: '500',
-                      transition: 'background 0.2s',
                     }}
                     onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'none'}
@@ -221,7 +405,6 @@ function Home() {
             </div>
           )}
 
-          {/* Posts */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Loading feed...</div>
           ) : posts.length === 0 ? (
@@ -230,70 +413,10 @@ function Home() {
               <p style={{ color: 'var(--text-primary)', fontWeight: '600' }}>No posts yet</p>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Be the first to share something!</p>
             </div>
-          ) : posts.map(post => {
-            const isLiked = post.likedByUserIds?.includes(myId);
-            const isOwner = post.author?.username === username;
-            const authorColor = roleColors[post.author?.roles?.[0]] || 'var(--accent)';
-
-            return (
-              <div key={post.id} style={cardStyle}>
-                <div style={{ padding: '1rem 1.2rem' }}>
-                  {/* Author */}
-                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
-                    <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', cursor: 'pointer' }}
-                      onClick={() => navigate(`/profile/${post.author?.username}`)}>
-                      <div style={{
-                        width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
-                        background: authorColor, display: 'flex', alignItems: 'center',
-                        justifyContent: 'center', fontSize: '1.1rem', fontWeight: 'bold', color: '#fff'
-                      }}>{post.author?.fullName?.charAt(0)}</div>
-                      <div>
-                        <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0, fontSize: '0.95rem' }}>{post.author?.fullName}</p>
-                        <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                          {post.author?.roles?.slice(0, 2).map(role => (
-                            <span key={role} style={{ color: authorColor, fontSize: '0.75rem', fontWeight: '500' }}>
-                              {role.replace('_', ' ')}
-                            </span>
-                          ))}
-                          {post.author?.city && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>· {post.author.city}</span>}
-                          <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>· {timeAgo(post.createdAt)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    {isOwner && (
-                      <button onClick={() => deletePost(post.id)} style={{
-                        background: 'none', border: 'none', color: 'var(--text-muted)',
-                        cursor: 'pointer', fontSize: '1rem', padding: '0.2rem 0.5rem',
-                        borderRadius: '4px',
-                      }} title="Delete post">🗑️</button>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', fontSize: '0.95rem', whiteSpace: 'pre-wrap', marginBottom: '0.8rem' }}>
-                    {post.content}
-                  </p>
-
-                  {/* Actions */}
-                  <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.6rem', display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => toggleLike(post.id)} style={{
-                      display: 'flex', alignItems: 'center', gap: '0.4rem',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: isLiked ? 'var(--accent)' : 'var(--text-secondary)',
-                      padding: '0.4rem 0.8rem', borderRadius: 'var(--radius-sm)',
-                      fontSize: '0.85rem', fontWeight: isLiked ? '600' : '400',
-                      transition: 'background 0.2s',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'none'}
-                    >
-                      {isLiked ? '❤️' : '🤍'} {post.likedByUserIds?.length || 0} Like{post.likedByUserIds?.length !== 1 ? 's' : ''}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          ) : posts.map(post => (
+            <PostCard key={post.id} post={post} myId={myId} myUsername={username}
+              fullName={fullName} onLike={toggleLike} onDelete={deletePost} />
+          ))}
         </div>
 
         {/* Right Sidebar */}

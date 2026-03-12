@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/skills/user/**").permitAll()
                 .requestMatchers("/api/posts/feed").permitAll()
                 .requestMatchers("/api/posts/user/**").permitAll()
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/posts/*/comments").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
             )

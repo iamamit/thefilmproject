@@ -1,5 +1,8 @@
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/AuthController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/AuthService.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Comment.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/CommentController.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/CommentRepository.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Connection.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/ConnectionController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/ConnectionRepository.java

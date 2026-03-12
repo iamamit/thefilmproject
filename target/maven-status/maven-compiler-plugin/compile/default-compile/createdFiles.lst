@@ -1,7 +1,9 @@
 com/thefilmproject/ConnectionController.class
+com/thefilmproject/CommentRepository.class
 com/thefilmproject/SkillController.class
 com/thefilmproject/JwtAuthFilter.class
 com/thefilmproject/PostController$PostRequest.class
+com/thefilmproject/CommentController$CommentRequest.class
 com/thefilmproject/UserSkillRepository.class
 com/thefilmproject/AuthService.class
 com/thefilmproject/User.class
@@ -22,10 +24,12 @@ com/thefilmproject/TheFilmProjectApplication.class
 com/thefilmproject/AuthController.class
 com/thefilmproject/UserSkill.class
 com/thefilmproject/SecurityConfig.class
+com/thefilmproject/CommentController.class
 com/thefilmproject/AuthService$RegisterRequest.class
 com/thefilmproject/MessageController.class
 com/thefilmproject/Post.class
 com/thefilmproject/MessageRepository.class
 com/thefilmproject/Connection$ConnectionStatus.class
 com/thefilmproject/Connection.class
+com/thefilmproject/Comment.class
 com/thefilmproject/PostRepository.class
