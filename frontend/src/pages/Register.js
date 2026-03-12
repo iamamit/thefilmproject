@@ -32,6 +32,7 @@ function Register() {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('fullName', res.data.fullName);
+      localStorage.setItem('userId', res.data.id);
       navigate('/discover');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');

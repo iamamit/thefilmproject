@@ -10,6 +10,9 @@
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Message.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageRepository.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Post.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PostController.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PostRepository.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/SecurityConfig.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/SkillController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/TheFilmProjectApplication.java

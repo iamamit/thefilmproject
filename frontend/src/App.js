@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Home from './pages/Home';
 import Discover from './pages/Discover';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
@@ -20,20 +21,13 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/discover" element={<Discover />} />
-        <Route path="/profile/:username" element={
-          <PrivateRoute><Profile /></PrivateRoute>
-        } />
-        <Route path="/edit-profile" element={
-          <PrivateRoute><EditProfile /></PrivateRoute>
-        } />
-        <Route path="/messages" element={
-          <PrivateRoute><Messages /></PrivateRoute>
-        } />
-        <Route path="/connections" element={
-          <PrivateRoute><Connections /></PrivateRoute>
-        } />
-        <Route path="/" element={<Navigate to="/discover" />} />
+        <Route path="/profile/:username" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/edit-profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
+        <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+        <Route path="/connections" element={<PrivateRoute><Connections /></PrivateRoute>} />
+        <Route path="/" element={<Navigate to="/home" />} />
       </Routes>
     </BrowserRouter>
   );
