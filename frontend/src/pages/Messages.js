@@ -98,7 +98,7 @@ function Messages() {
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                   <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%', background: '#e94560',
+                    width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     color: '#fff', fontWeight: 'bold', flexShrink: 0
                   }}>{other.fullName?.charAt(0)}</div>
@@ -121,7 +121,7 @@ function Messages() {
           <>
             <div style={{ padding: '1rem 1.5rem', background: '#1a1a2e', borderBottom: '1px solid #2a2a4a', display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{
-                width: '40px', height: '40px', borderRadius: '50%', background: '#e94560',
+                width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 color: '#fff', fontWeight: 'bold'
               }}>{selectedUser.fullName?.charAt(0)}</div>
@@ -142,7 +142,7 @@ function Messages() {
                     <div style={{
                       maxWidth: '60%', padding: '0.7rem 1rem',
                       borderRadius: isMine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      background: isMine ? '#e94560' : '#1a1a2e',
+                      background: isMine ? 'var(--accent)' : '#1a1a2e',
                       border: isMine ? 'none' : '1px solid #2a2a4a'
                     }}>
                       <p style={{ color: '#fff', margin: 0, fontSize: '0.95rem' }}>{msg.content}</p>
@@ -168,7 +168,7 @@ function Messages() {
                 }}
               />
               <button onClick={sendMessage} disabled={sending} style={{
-                background: '#e94560', color: '#fff', border: 'none',
+                background: 'var(--accent)', color: '#fff', border: 'none',
                 borderRadius: '50%', width: '44px', height: '44px',
                 cursor: 'pointer', fontSize: '1.2rem'
               }}>➤</button>

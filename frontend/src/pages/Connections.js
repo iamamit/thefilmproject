@@ -48,7 +48,7 @@ function Connections() {
   const tabStyle = (tab) => ({
     padding: '0.6rem 1.5rem', borderRadius: '20px', cursor: 'pointer',
     border: 'none', fontWeight: 'bold', fontSize: '0.9rem',
-    background: activeTab === tab ? '#e94560' : '#2a2a4a',
+    background: activeTab === tab ? 'var(--accent)' : '#2a2a4a',
     color: '#fff'
   });
 
@@ -59,7 +59,7 @@ function Connections() {
   };
 
   const avatarStyle = {
-    width: '55px', height: '55px', borderRadius: '50%', background: '#e94560',
+    width: '55px', height: '55px', borderRadius: '50%', background: 'var(--accent)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     fontSize: '1.3rem', fontWeight: 'bold', color: '#fff', flexShrink: 0
   };
@@ -104,7 +104,7 @@ function Connections() {
                     <p style={{ color: '#888', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{other.username}</p>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
                       {other.roles?.map(role => (
-                        <span key={role} style={{ background: '#2a2a4a', color: '#e94560', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem' }}>
+                        <span key={role} style={{ background: '#2a2a4a', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem' }}>
                           {role.replace('_', ' ')}
                         </span>
                       ))}
@@ -116,7 +116,7 @@ function Connections() {
                       padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                     }}>View</button>
                     <button onClick={() => navigate(`/messages?user=${other.id}&name=${other.fullName}`)} style={{
-                      background: '#e94560', color: '#fff', border: 'none',
+                      background: 'var(--accent)', color: '#fff', border: 'none',
                       padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                     }}>💬</button>
                   </div>

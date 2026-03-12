@@ -17,6 +17,7 @@ function Login() {
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('fullName', res.data.fullName);
+      localStorage.setItem('userId', res.data.id);
       navigate('/discover');
     } catch (err) {
       setError('Invalid email or password');
