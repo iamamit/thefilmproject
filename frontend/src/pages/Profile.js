@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
+import Avatar from '../components/AvatarUpload';
 
 const roleColors = {
   DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
@@ -56,10 +57,9 @@ function ProfilePostCard({ post, idx, postsLen, myUsername, token }) {
           <button onClick={toggle} style={{
             background: 'none', border: 'none', color: showComments ? 'var(--accent)' : 'var(--text-muted)',
             cursor: 'pointer', fontSize: '0.8rem', fontWeight: '500', padding: 0,
-          }}>💬 {showComments ? 'Hide' : `${comments.length || 'View'} Comments`}</button>
+          }}>💬 {showComments ? 'Hide' : 'View Comments'}</button>
         </div>
       </div>
-
       {showComments && (
         <div style={{ background: 'var(--bg-primary)', padding: '0.8rem 1.5rem', borderTop: '1px solid var(--border)' }}>
           {loadingC && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading...</p>}
@@ -127,6 +127,10 @@ function Profile() {
   const token = localStorage.getItem('token');
   const isOwn = username === myUsername;
 
+  const handlePhotoUpdated = (newPhoto) => {
+    setUser(prev => ({ ...prev, profilePhotoUrl: newPhoto }));
+  };
+
   useEffect(() => { fetchProfile(); }, [username]);
 
   const fetchProfile = async () => {
@@ -177,22 +181,18 @@ function Profile() {
   if (loading) return <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: 'var(--text-secondary)' }}>Loading...</p></div>;
   if (!user) return <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: 'var(--text-secondary)' }}>User not found</p></div>;
 
-  const primaryColor = roleColors[user.roles?.[0]] || '#0a66c2';
-
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
       <div style={{ maxWidth: '1128px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', alignItems: 'start' }}>
         <div>
+          {/* Profile Card */}
           <div style={card}>
             <div style={{ height: '130px', background: 'linear-gradient(135deg, #b0bec5 0%, #78909c 100%)' }} />
             <div style={{ padding: '0 1.5rem 1.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{
-                  width: '100px', height: '100px', borderRadius: '50%', background: primaryColor,
-                  border: '4px solid var(--bg-card)', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: '2.2rem', fontWeight: 'bold', color: '#fff',
-                  marginTop: '-50px', flexShrink: 0,
-                }}>{user.fullName?.charAt(0)}</div>
+                <div style={{ marginTop: '-50px' }}>
+                  <Avatar user={user} size={100} editable={isOwn} onUpdated={handlePhotoUpdated} />
+                </div>
                 <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem', flexWrap: 'wrap' }}>
                   {isOwn ? (
                     <button onClick={() => navigate('/edit-profile')} style={{
@@ -230,6 +230,7 @@ function Profile() {
             </div>
           </div>
 
+          {/* Skills */}
           {skills.length > 0 && (
             <div style={card}>
               <div style={{ padding: '1.2rem 1.5rem' }}>
@@ -246,6 +247,7 @@ function Profile() {
             </div>
           )}
 
+          {/* Languages */}
           {user.languages?.length > 0 && (
             <div style={card}>
               <div style={{ padding: '1.2rem 1.5rem' }}>
@@ -259,6 +261,7 @@ function Profile() {
             </div>
           )}
 
+          {/* Activity */}
           {posts.length > 0 && (
             <div style={card}>
               <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
@@ -271,6 +274,7 @@ function Profile() {
           )}
         </div>
 
+        {/* Right Sidebar */}
         <div style={{ position: 'sticky', top: '72px' }}>
           <div style={{ ...card, padding: '1rem' }}>
             <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>👥 People also viewed</p>

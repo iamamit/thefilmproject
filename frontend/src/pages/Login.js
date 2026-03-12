@@ -18,6 +18,8 @@ function Login() {
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('fullName', res.data.fullName);
       localStorage.setItem('userId', res.data.id);
+      if (res.data.profilePhotoUrl) localStorage.setItem('profilePhoto', res.data.profilePhotoUrl);
+      else localStorage.removeItem('profilePhoto');
       navigate('/home');
     } catch (err) {
       setError(err.response?.data || 'Invalid email or password');
