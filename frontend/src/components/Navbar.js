@@ -93,11 +93,16 @@ function Navbar() {
               borderBottom: isActive(`/profile/${username}`) ? '2px solid var(--accent)' : '2px solid transparent',
               padding: '0.3rem 0.8rem', height: '56px', justifyContent: 'center',
             }}>
-              <div style={{
-                width: '24px', height: '24px', borderRadius: '50%',
-                background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold', color: '#fff'
-              }}>{(fullName || username)?.charAt(0).toUpperCase()}</div>
+              {localStorage.getItem('profilePhoto') ? (
+                <img src={localStorage.getItem('profilePhoto')} alt="me"
+                  style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <div style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  background: 'var(--accent)', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold', color: '#fff'
+                }}>{(fullName || username)?.charAt(0).toUpperCase()}</div>
+              )}
               <span style={{ fontSize: '0.7rem', fontWeight: '500' }}>Me</span>
             </Link>
             <button onClick={logout} style={{

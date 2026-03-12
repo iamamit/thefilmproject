@@ -33,6 +33,12 @@ public class Post {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "is_project")
+    private boolean isProject = false;
+
+    @Column(name = "project_type")
+    private String projectType;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public User getAuthor() { return author; }
@@ -45,4 +51,9 @@ public class Post {
     public void setLikedByUserIds(Set<Long> ids) { this.likedByUserIds = ids; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public boolean isProject() { return isProject; }
+    public void setProject(boolean isProject) { this.isProject = isProject; }
+    public String getProjectType() { return projectType; }
+    public void setProjectType(String projectType) { this.projectType = projectType; }
 }

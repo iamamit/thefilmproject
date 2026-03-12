@@ -16,6 +16,16 @@ function timeAgo(dateStr) {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
+
+const projectColors = {
+  FILM:        { bg: '#0a66c2', light: '#e8f0fe', label: '🎬 Film Project' },
+  MUSIC:       { bg: '#9b59b6', light: '#f3e8ff', label: '🎵 Music Project' },
+  WRITING:     { bg: '#f39c12', light: '#fef3e2', label: '✍️ Writing Project' },
+  PHOTOGRAPHY: { bg: '#1abc9c', light: '#e2faf5', label: '📸 Photography Project' },
+  THEATRE:     { bg: '#e74c3c', light: '#fde8e8', label: '🎭 Theatre Project' },
+  DIGITAL:     { bg: '#2ecc71', light: '#e2faeb', label: '🎮 Digital Project' },
+};
+
 function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommentAdded }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
@@ -26,6 +36,7 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
   const isLiked = post.likedByUserIds?.includes(myId);
   const isOwner = post.author?.username === myUsername;
   const authorColor = roleColors[post.author?.roles?.[0]] || '#0a66c2';
+  const projectInfo = post.project ? (projectColors[post.projectType] || projectColors.FILM) : null;
   const token = localStorage.getItem('token');
 
   const fetchComments = async () => {
@@ -68,6 +79,15 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
 
   return (
     <div style={cardStyle}>
+      {projectInfo && (
+        <div style={{
+          background: `linear-gradient(90deg, ${projectInfo.bg} 0%, ${projectInfo.bg}cc 100%)`,
+          padding: '0.4rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem',
+        }}>
+          <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: '700' }}>{projectInfo.label}</span>
+          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.75rem', marginLeft: 'auto' }}>🔍 Looking for collaborators</span>
+        </div>
+      )}
       <div style={{ padding: '1rem 1.2rem' }}>
         {/* Author */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
@@ -100,9 +120,7 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
         </div>
 
         {/* Content */}
-        <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', fontSize: '0.95rem', whiteSpace: 'pre-wrap', marginBottom: '0.8rem' }}>
-          {post.content}
-        </p>
+        <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', fontSize: '0.95rem', whiteSpace: 'pre-wrap', marginBottom: '0.8rem' }}>{post.content}</p>
 
         {/* Stats row */}
         {(post.likedByUserIds?.length > 0 || commentCount > 0) && (
@@ -231,6 +249,8 @@ function Home() {
   const [postContent, setPostContent] = useState('');
   const [posting, setPosting] = useState(false);
   const [showPostBox, setShowPostBox] = useState(false);
+  const [isProject, setIsProject] = useState(false);
+  const [projectType, setProjectType] = useState('FILM');
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const fullName = localStorage.getItem('fullName');
@@ -250,8 +270,10 @@ function Home() {
     if (!postContent.trim()) return;
     setPosting(true);
     try {
-      await api.post('/posts', { content: postContent });
+      await api.post('/posts', { content: postContent, isProject: isProject, projectType: isProject ? projectType : null });
       setPostContent('');
+      setIsProject(false);
+      setProjectType('FILM');
       setShowPostBox(false);
       fetchFeed();
     } catch (err) { console.error(err); }
@@ -373,8 +395,34 @@ function Home() {
                       color: 'var(--text-primary)', fontSize: '0.9rem', resize: 'vertical', fontFamily: 'inherit',
                     }}
                   />
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <button onClick={() => { setShowPostBox(false); setPostContent(''); }} style={{
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                    {/* Project Toggle */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <button onClick={() => setIsProject(!isProject)} style={{
+                        display: 'flex', alignItems: 'center', gap: '0.4rem',
+                        background: isProject ? '#0a66c218' : 'transparent',
+                        border: `1px solid ${isProject ? '#0a66c2' : 'var(--border)'}`,
+                        color: isProject ? '#0a66c2' : 'var(--text-secondary)',
+                        borderRadius: '20px', padding: '0.35rem 0.8rem',
+                        cursor: 'pointer', fontSize: '0.8rem', fontWeight: isProject ? '600' : '400',
+                      }}>🎬 Project Post</button>
+                      {isProject && (
+                        <select value={projectType} onChange={e => setProjectType(e.target.value)} style={{
+                          background: 'var(--bg-primary)', border: '1px solid var(--border)',
+                          color: 'var(--text-primary)', borderRadius: '20px',
+                          padding: '0.35rem 0.8rem', fontSize: '0.8rem', outline: 'none', cursor: 'pointer',
+                        }}>
+                          <option value="FILM">🎬 Film</option>
+                          <option value="MUSIC">🎵 Music</option>
+                          <option value="WRITING">✍️ Writing</option>
+                          <option value="PHOTOGRAPHY">📸 Photography</option>
+                          <option value="THEATRE">🎭 Theatre</option>
+                          <option value="DIGITAL">🎮 Digital</option>
+                        </select>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button onClick={() => { setShowPostBox(false); setPostContent(''); setIsProject(false); }} style={{
                       background: 'none', border: '1px solid var(--border)', color: 'var(--text-secondary)',
                       padding: '0.4rem 1rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.85rem'
                     }}>Cancel</button>
@@ -384,6 +432,7 @@ function Home() {
                       border: 'none', padding: '0.4rem 1.2rem', borderRadius: '20px',
                       cursor: postContent.trim() ? 'pointer' : 'default', fontSize: '0.85rem', fontWeight: '600'
                     }}>{posting ? 'Posting...' : 'Post'}</button>
+                    </div>
                   </div>
                 </div>
               )}

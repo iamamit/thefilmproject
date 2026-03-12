@@ -24,6 +24,8 @@ public class PostController {
         Post post = new Post();
         post.setAuthor(author);
         post.setContent(request.content());
+        if (request.isProject() != null) post.setProject(request.isProject());
+        if (request.projectType() != null) post.setProjectType(request.projectType());
         return ResponseEntity.ok(postRepo.save(post));
     }
 
@@ -61,5 +63,5 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    record PostRequest(String content) {}
+    record PostRequest(String content, Boolean isProject, String projectType) {}
 }

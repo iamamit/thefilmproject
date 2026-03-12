@@ -70,4 +70,14 @@ public class UserController {
 
         return ResponseEntity.ok(userRepository.save(user));
     }
+
+    @PutMapping("/me/photo")
+    public ResponseEntity<?> uploadPhoto(@RequestBody java.util.Map<String, String> body, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+        String photo = body.get("photo");
+        if (photo == null || photo.isEmpty()) return ResponseEntity.badRequest().body("No photo provided");
+        user.setProfilePhotoUrl(photo);
+        userRepository.save(user);
+        return ResponseEntity.ok(java.util.Map.of("message", "Photo updated"));
+    }
 }
