@@ -13,6 +13,9 @@
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Message.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/MessageRepository.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PortfolioController.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PortfolioItem.java
+/Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PortfolioRepository.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/Post.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PostController.java
 /Users/amit/Downloads/thefilmproject/src/main/java/com/thefilmproject/PostRepository.java

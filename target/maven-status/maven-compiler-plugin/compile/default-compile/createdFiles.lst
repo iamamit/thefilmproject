@@ -1,4 +1,5 @@
 com/thefilmproject/ConnectionController.class
+com/thefilmproject/PortfolioController.class
 com/thefilmproject/CommentRepository.class
 com/thefilmproject/SkillController.class
 com/thefilmproject/JwtAuthFilter.class
@@ -23,7 +24,9 @@ com/thefilmproject/MessageController$MessageRequest.class
 com/thefilmproject/TheFilmProjectApplication.class
 com/thefilmproject/AuthController.class
 com/thefilmproject/UserSkill.class
+com/thefilmproject/PortfolioRepository.class
 com/thefilmproject/SecurityConfig.class
+com/thefilmproject/PortfolioItem.class
 com/thefilmproject/CommentController.class
 com/thefilmproject/AuthService$RegisterRequest.class
 com/thefilmproject/MessageController.class
