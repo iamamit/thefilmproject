@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 
@@ -8,6 +8,11 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) navigate('/home');
+  }, [navigate]);
 
   const handleSubmit = async () => {
     if (!email || !password) { setError('Please fill in all fields'); return; }
@@ -139,6 +144,22 @@ function Login() {
               <Link to="/register" style={{ color: 'var(--accent)', fontWeight: '600' }}>Join now</Link>
             </p>
           </div>
+        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>or</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+          </div>
+          <a href="http://localhost:8080/oauth2/authorization/google" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem',
+            background: '#fff', color: '#333', border: '1px solid #ddd',
+            borderRadius: '8px', padding: '0.7rem 1rem', textDecoration: 'none',
+            fontSize: '0.9rem', fontWeight: '500', cursor: 'pointer',
+          }}>
+            <img src="https://www.google.com/favicon.ico" alt="Google" style={{ width: '18px', height: '18px' }} />
+            Continue with Google
+          </a>
+        </div>
         </div>
       </div>
     </div>

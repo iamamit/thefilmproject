@@ -39,10 +39,17 @@ function EditProfile() {
           languages: userRes.data.languages || [],
         });
         setSkills(skillsRes.data);
-      } catch (err) { console.error(err); }
+      } catch (err) {
+        console.error(err);
+        // If not authenticated, send user back to login
+        if (err.response && err.response.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }
+      }
     };
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const toggleRole = (role) => {
     setForm(f => ({ ...f, roles: f.roles.includes(role) ? f.roles.filter(r => r !== role) : [...f.roles, role] }));

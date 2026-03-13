@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import OAuth2Callback from './pages/OAuth2Callback';
 import Home from './pages/Home';
 import Discover from './pages/Discover';
 import Profile from './pages/Profile';
@@ -21,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/oauth2/callback" element={<OAuth2Callback />} />
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/profile/:username" element={<PrivateRoute><Profile /></PrivateRoute>} />
