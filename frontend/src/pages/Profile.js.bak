@@ -42,6 +42,20 @@ function PortfolioCard({ item, isOwn, onDelete, card }) {
   };
   const catColor = categoryColors[item.category] || '#8899aa';
 
+  const deletePortfolioItem = async (id) => {
+    try { await api.delete(`/portfolio/${id}`); setPortfolio(portfolio.filter(p => p.id !== id)); } catch {}
+  };
+
+  const addPortfolioItem = async () => {
+    if (!newItem.title.trim()) return;
+    try {
+      const res = await api.post('/portfolio', newItem);
+      setPortfolio([res.data, ...portfolio]);
+      setNewItem({ title: '', description: '', category: 'Short Film', videoUrl: '', imageUrl: '' });
+      setShowAddPortfolio(false);
+    } catch {}
+  };
+
   return (
     <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
       {/* Category banner */}
@@ -220,7 +234,6 @@ function Profile() {
         const postsRes = await api.get(`/posts/user/${userRes.data.id}`);
         setPosts(postsRes.data.content || []);
       } catch {}
-      try { const portRes = await api.get(`/portfolio/${username}`); setPortfolio(portRes.data); } catch {}
       if (token && !isOwn) {
         try {
           const connRes = await api.get('/connections');
@@ -246,20 +259,6 @@ function Profile() {
   const respondConnection = async (accept) => {
     try { await api.patch(`/connections/${connectionId}/respond?accept=${accept}`); setConnectionStatus(accept ? 'ACCEPTED' : null); }
     catch {}
-  };
-
-  const deletePortfolioItem = async (id) => {
-    try { await api.delete(`/portfolio/${id}`); setPortfolio(portfolio.filter(p => p.id !== id)); } catch {}
-  };
-
-  const addPortfolioItem = async () => {
-    if (!newItem.title.trim()) return;
-    try {
-      const res = await api.post('/portfolio', newItem);
-      setPortfolio([res.data, ...portfolio]);
-      setNewItem({ title: '', description: '', category: 'Short Film', videoUrl: '', imageUrl: '' });
-      setShowAddPortfolio(false);
-    } catch {}
   };
 
   const card = {

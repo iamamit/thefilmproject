@@ -29,6 +29,7 @@ public class User {
 
     @Column(columnDefinition = "TEXT")
     private String profilePhotoUrl;
+    @Column(columnDefinition = "TEXT")
     private String bio;
     private String city;
     private String country;
