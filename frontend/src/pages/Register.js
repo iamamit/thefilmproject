@@ -77,10 +77,10 @@ function Register() {
       <div style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
           <span style={{ fontSize: '1.5rem' }}>🎬</span>
-          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.2rem' }}>TheFilmProject</span>
+          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.2rem' }}>CollabNow</span>
         </Link>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Already on TheFilmProject?</span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Already on CollabNow?</span>
           <Link to="/login" style={{
             border: '1px solid var(--accent)', color: 'var(--accent)',
             padding: '0.4rem 1.2rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '600',
@@ -243,7 +243,7 @@ function Register() {
                   background: 'var(--accent)', color: '#fff', border: 'none',
                   fontSize: '0.95rem', fontWeight: '600', cursor: loading ? 'default' : 'pointer',
                   opacity: loading ? 0.7 : 1,
-                }}>{loading ? 'Creating account...' : '🎬 Join TheFilmProject'}</button>
+                }}>{loading ? 'Creating account...' : '🎬 Join CollabNow'}</button>
               </div>
             </div>
           )}

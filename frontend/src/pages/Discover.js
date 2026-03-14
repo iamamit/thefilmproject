@@ -77,7 +77,7 @@ function Discover() {
           ) : (
             <div style={{ ...cardStyle, cursor: 'default', padding: '1.5rem', textAlign: 'center' }}>
               <p style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎬</p>
-              <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.3rem' }}>Join TheFilmProject</p>
+              <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.3rem' }}>Join CollabNow</p>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>Connect with India's best film creators</p>
               <button onClick={() => navigate('/register')} style={{
                 width: '100%', background: 'var(--accent)', border: 'none',
@@ -204,7 +204,7 @@ function Discover() {
         {/* Right Sidebar */}
         <div style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ ...cardStyle, cursor: 'default', padding: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>🎬 About TheFilmProject</p>
+            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>🎬 About CollabNow</p>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: '1.5' }}>
               India's professional network for film & content creators. Connect, collaborate, and create.
             </p>

@@ -43,7 +43,7 @@ function Navbar() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <Link to={token ? '/home' : '/discover'} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
           <span style={{ fontSize: '1.4rem' }}>🎬</span>
-          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>TFP</span>
+          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.1rem', letterSpacing: '-0.02em' }}>CollabNow</span>
         </Link>
         <div style={{
           display: 'flex', alignItems: 'center', gap: '0.5rem',

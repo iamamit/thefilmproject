@@ -59,10 +59,10 @@ function Login() {
       <div style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
           <span style={{ fontSize: '1.5rem' }}>🎬</span>
-          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.2rem' }}>TheFilmProject</span>
+          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.2rem' }}>CollabNow</span>
         </Link>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>New to TheFilmProject?</span>
+          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>New to CollabNow?</span>
           <Link to="/register" style={{
             border: '1px solid var(--accent)', color: 'var(--accent)',
             padding: '0.4rem 1.2rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '600',
@@ -154,7 +154,7 @@ function Login() {
             </div>
 
             <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-              New to TheFilmProject?{' '}
+              New to CollabNow?{' '}
               <Link to="/register" style={{ color: 'var(--accent)', fontWeight: '600' }}>Join now</Link>
             </p>
           </div>

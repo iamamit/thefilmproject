@@ -48,7 +48,7 @@ test.describe.serial('TFP Integration Suite', () => {
     // Step 3 - city, country
     await page.locator('input[placeholder="Mumbai"]').fill(USER.city);
     await page.locator('input[placeholder="India"]').fill(USER.country);
-    await page.locator('button:has-text("Join TheFilmProject")').click();
+    await page.locator('button:has-text("Join CollabNow")').click();
     await page.waitForURL(`${BASE}/home`, { timeout: 15000 });
 
     token  = await page.evaluate(() => localStorage.getItem('token'));
