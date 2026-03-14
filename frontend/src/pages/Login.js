@@ -164,7 +164,7 @@ function Login() {
             <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>or</span>
             <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
           </div>
-          <a href="http://localhost:8080/oauth2/authorization/google" style={{
+          <a href={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}/oauth2/authorization/google`} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem',
             background: '#fff', color: '#333', border: '1px solid #ddd',
             borderRadius: '8px', padding: '0.7rem 1rem', textDecoration: 'none',
