@@ -11,7 +11,21 @@ function Login() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) navigate('/home');
+    if (!token) return;
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) { localStorage.removeItem('token'); return; }
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      // If token has exp claim, ensure it's in the future (exp is seconds)
+      if (!payload.exp || payload.exp * 1000 > Date.now()) {
+        navigate('/home');
+      } else {
+        // expired token: clear and stay on login
+        localStorage.removeItem('token');
+      }
+    } catch (e) {
+      localStorage.removeItem('token');
+    }
   }, [navigate]);
 
   const handleSubmit = async () => {

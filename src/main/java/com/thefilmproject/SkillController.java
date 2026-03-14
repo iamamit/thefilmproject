@@ -24,7 +24,7 @@ public class SkillController {
     @GetMapping
     public List<UserSkill> getMySkills(Authentication auth) {
         if (auth == null || !auth.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        User user = userRepo.findByEmail(auth.getName()).orElseThrow();
+        User user = userRepo.findByEmail(auth.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + auth.getName()));
         return skillRepo.findByUserId(user.getId());
     }
 

@@ -13,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p WHERE p.author.id = :userId ORDER BY p.createdAt DESC")
     Page<Post> findByAuthorId(@Param("userId") Long userId, Pageable pageable);
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByAuthorId(Long authorId);
 }

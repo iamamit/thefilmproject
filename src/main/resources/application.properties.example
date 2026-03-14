@@ -5,15 +5,19 @@ spring.datasource.username=postgres
 spring.datasource.password=postgres
 
 # Placeholder Google OAuth values - set in environment or CI
-google.client-id=CHANGE_ME
-google.client-secret=CHANGE_ME
+google.client-id=YOUR_GOOGLE_CLIENT_ID
+google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
 
 # Frontend callback URL used by OAuth success handler
 frontend.url=http://localhost:3000
 
 # JWT secret placeholder
-jwt.secret=CHANGE_ME
+jwt.secret=YOUR_JWT_SECRET
 jwt.expiration=86400000
 
 # CORS allowed origins (development)
 cors.allowed.origins=http://localhost:3000
+
+spring.security.oauth2.client.registration.google.client-id=YOUR_GOOGLE_CLIENT_ID
+spring.security.oauth2.client.registration.google.client-secret=YOUR_GOOGLE_CLIENT_SECRET
+spring.security.oauth2.client.registration.google.scope=email,profile

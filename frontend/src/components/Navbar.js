@@ -11,6 +11,7 @@ function Navbar() {
 
   const logout = () => {
     localStorage.clear();
+    document.cookie = 'JSESSIONID=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';
     navigate('/login');
   };
 

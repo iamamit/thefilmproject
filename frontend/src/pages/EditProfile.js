@@ -41,9 +41,10 @@ function EditProfile() {
         setSkills(skillsRes.data);
       } catch (err) {
         console.error(err);
-        // If not authenticated, send user back to login
+        // If not authenticated, send user back to login (do not remove token here;
+        // allow login page or auth flow to handle token clearing to avoid immediate
+        // logout on transient failures)
         if (err.response && err.response.status === 401) {
-          localStorage.removeItem('token');
           navigate('/login');
         }
       }
@@ -58,30 +59,41 @@ function EditProfile() {
   const toggleLang = (lang) => {
     setForm(f => ({ ...f, languages: f.languages.includes(lang) ? f.languages.filter(l => l !== lang) : [...f.languages, lang] }));
   };
+  const [deletedSkillIds, setDeletedSkillIds] = useState([]);
+  const [newSkills, setNewSkills] = useState([]);
+
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await api.put('/users/me', form);
+      // Delete removed skills
+      await Promise.all(deletedSkillIds.map(id => api.delete(`/skills/${id}`).catch(() => {})));
+      // Add new skills
+      await Promise.all(newSkills.map(s => api.post('/skills', { name: s.name, category: s.category, level: s.level }).catch(() => {})));
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setTimeout(() => { setSaved(false); navigate(`/profile/${username}`); }, 1500);
     } catch (err) { alert('Save failed'); }
     finally { setSaving(false); }
   };
 
-  const addSkill = async () => {
+  const addSkill = () => {
     if (!newSkill.name.trim()) return;
-    try {
-      const res = await api.post('/skills', { ...newSkill, category: newSkill.category || 'GENERAL' });
-      setSkills([...skills, res.data]);
-      setNewSkill({ name: '', category: '', level: 'BEGINNER' });
-    } catch {}
+    const tempSkill = { ...newSkill, category: newSkill.category || 'GENERAL', id: 'new_' + Date.now() };
+    setSkills([...skills, tempSkill]);
+    setNewSkills([...newSkills, tempSkill]);
+    setNewSkill({ name: '', category: '', level: 'BEGINNER' });
   };
 
-  const deleteSkill = async (id) => {
-    try { await api.delete(`/skills/${id}`); setSkills(skills.filter(s => s.id !== id)); }
-    catch {}
+  const deleteSkill = (id) => {
+    setSkills(skills.filter(s => s.id !== id));
+    if (String(id).startsWith('new_')) {
+      setNewSkills(newSkills.filter(s => s.id !== id));
+    } else {
+      setDeletedSkillIds([...deletedSkillIds, id]);
+    }
   };
+
 
   const handlePhotoUpdated = (newPhoto) => {
     setUser(prev => ({ ...prev, profilePhotoUrl: newPhoto }));

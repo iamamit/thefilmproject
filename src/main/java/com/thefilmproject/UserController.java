@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -14,10 +15,23 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final ConnectionRepository connectionRepository;
+    private final UserSkillRepository skillRepository;
+    private final PostRepository postRepository;
+    private final PortfolioRepository portfolioRepository;
+    private final CommentRepository commentRepository;
+    private final MessageRepository messageRepository;
 
-    public UserController(UserRepository userRepository, ConnectionRepository connectionRepository) {
+    public UserController(UserRepository userRepository, ConnectionRepository connectionRepository,
+                          UserSkillRepository skillRepository, PostRepository postRepository,
+                          PortfolioRepository portfolioRepository, CommentRepository commentRepository,
+                          MessageRepository messageRepository) {
         this.userRepository = userRepository;
         this.connectionRepository = connectionRepository;
+        this.skillRepository = skillRepository;
+        this.postRepository = postRepository;
+        this.portfolioRepository = portfolioRepository;
+        this.commentRepository = commentRepository;
+        this.messageRepository = messageRepository;
     }
 
     // ─── PUBLIC: Discover creators ─────────────────────────────────
@@ -82,5 +96,19 @@ public class UserController {
         user.setProfilePhotoUrl(photo);
         userRepository.save(user);
         return ResponseEntity.ok(java.util.Map.of("message", "Photo updated"));
+    }
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) return ResponseEntity.notFound().build();
+        // Delete in reverse dependency order
+        messageRepository.deleteBySenderIdOrReceiverId(id, id);
+        commentRepository.deleteByAuthorId(id);
+        skillRepository.deleteByUserId(id);
+        portfolioRepository.deleteByUserId(id);
+        postRepository.deleteByAuthorId(id);
+        connectionRepository.deleteByRequestorIdOrReceiverId(id, id);
+        userRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
