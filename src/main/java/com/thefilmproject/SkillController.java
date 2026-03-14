@@ -2,6 +2,8 @@ package com.thefilmproject;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class SkillController {
     // Get my skills
     @GetMapping
     public List<UserSkill> getMySkills(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         User user = userRepo.findByEmail(auth.getName()).orElseThrow();
         return skillRepo.findByUserId(user.getId());
     }
@@ -35,6 +38,7 @@ public class SkillController {
     // Add a skill
     @PostMapping
     public ResponseEntity<UserSkill> addSkill(@RequestBody UserSkill skill, Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         User user = userRepo.findByEmail(auth.getName()).orElseThrow();
         skill.setUser(user);
         return ResponseEntity.ok(skillRepo.save(skill));
@@ -43,6 +47,7 @@ public class SkillController {
     // Delete a skill
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSkill(@PathVariable Long id, Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         User user = userRepo.findByEmail(auth.getName()).orElseThrow();
         skillRepo.deleteByIdAndUserId(id, user.getId());
         return ResponseEntity.ok().build();

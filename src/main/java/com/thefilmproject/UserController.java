@@ -39,8 +39,9 @@ public class UserController {
     // ─── PRIVATE: Get my profile ───────────────────────────────────
     @GetMapping("/me")
     public ResponseEntity<User> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
         User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(user);
     }
 
@@ -57,8 +58,9 @@ public class UserController {
     public ResponseEntity<User> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody User updated) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
         User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (updated.getFullName() != null) user.setFullName(updated.getFullName());
         if (updated.getBio() != null) user.setBio(updated.getBio());
@@ -73,6 +75,7 @@ public class UserController {
 
     @PutMapping("/me/photo")
     public ResponseEntity<?> uploadPhoto(@RequestBody java.util.Map<String, String> body, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
         User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
         String photo = body.get("photo");
         if (photo == null || photo.isEmpty()) return ResponseEntity.badRequest().body("No photo provided");
