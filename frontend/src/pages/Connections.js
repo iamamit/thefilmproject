@@ -48,33 +48,33 @@ function Connections() {
   const tabStyle = (tab) => ({
     padding: '0.6rem 1.5rem', borderRadius: '20px', cursor: 'pointer',
     border: 'none', fontWeight: 'bold', fontSize: '0.9rem',
-    background: activeTab === tab ? 'var(--accent)' : '#2a2a4a',
-    color: '#fff'
+    background: activeTab === tab ? 'var(--accent)' : 'var(--bg-hover)',
+    color: 'var(--text-primary)'
   });
 
   const cardStyle = {
-    background: '#1a1a2e', borderRadius: '12px', padding: '1.2rem',
-    border: '1px solid #2a2a4a', display: 'flex',
+    background: 'var(--bg-card)', borderRadius: '12px', padding: '1.2rem',
+    border: '1px solid var(--border)', display: 'flex',
     alignItems: 'center', gap: '1rem'
   };
 
   const avatarStyle = {
     width: '55px', height: '55px', borderRadius: '50%', background: 'var(--accent)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: '1.3rem', fontWeight: 'bold', color: '#fff', flexShrink: 0
+    fontSize: '1.3rem', fontWeight: 'bold', color: 'var(--text-primary)', flexShrink: 0
   };
 
   if (loading) return (
-    <div style={{ background: '#0f0f1a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: '#888' }}>Loading...</p>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: 'var(--text-muted)' }}>Loading...</p>
     </div>
   );
 
   return (
-    <div style={{ background: '#0f0f1a', minHeight: '100vh', padding: '2rem' }}>
+    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '2rem' }}>
       <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-        <h2 style={{ color: '#fff', marginBottom: '0.5rem' }}>My Network</h2>
-        <p style={{ color: '#888', marginBottom: '2rem' }}>Manage your connections</p>
+        <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>My Network</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Manage your connections</p>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '2rem' }}>
@@ -93,18 +93,18 @@ function Connections() {
         {activeTab === 'connections' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {connections.length === 0 ? (
-              <p style={{ color: '#888' }}>No connections yet. Discover creators and connect!</p>
+              <p style={{ color: 'var(--text-muted)' }}>No connections yet. Discover creators and connect!</p>
             ) : connections.map(conn => {
               const other = getOtherUser(conn);
               return (
                 <div key={conn.id} style={cardStyle}>
                   <div style={avatarStyle}>{other.fullName?.charAt(0)}</div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ color: '#fff', margin: 0, fontWeight: 'bold' }}>{other.fullName}</p>
-                    <p style={{ color: '#888', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{other.username}</p>
+                    <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{other.fullName}</p>
+                    <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{other.username}</p>
                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
                       {other.roles?.map(role => (
-                        <span key={role} style={{ background: '#2a2a4a', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem' }}>
+                        <span key={role} style={{ background: 'var(--bg-hover)', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem' }}>
                           {role.replace('_', ' ')}
                         </span>
                       ))}
@@ -112,11 +112,11 @@ function Connections() {
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
                     <button onClick={() => navigate(`/profile/${other.username}`)} style={{
-                      background: '#2a2a4a', color: '#fff', border: 'none',
+                      background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none',
                       padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                     }}>View</button>
                     <button onClick={() => navigate(`/messages?user=${other.id}&name=${other.fullName}`)} style={{
-                      background: 'var(--accent)', color: '#fff', border: 'none',
+                      background: 'var(--accent)', color: 'var(--text-primary)', border: 'none',
                       padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                     }}>💬</button>
                   </div>
@@ -130,22 +130,22 @@ function Connections() {
         {activeTab === 'pending' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {pending.length === 0 ? (
-              <p style={{ color: '#888' }}>No pending requests.</p>
+              <p style={{ color: 'var(--text-muted)' }}>No pending requests.</p>
             ) : pending.map(conn => (
               <div key={conn.id} style={cardStyle}>
                 <div style={avatarStyle}>{conn.sender.fullName?.charAt(0)}</div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ color: '#fff', margin: 0, fontWeight: 'bold' }}>{conn.sender.fullName}</p>
-                  <p style={{ color: '#888', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.sender.username}</p>
-                  {conn.sender.city && <p style={{ color: '#666', margin: 0, fontSize: '0.8rem' }}>📍 {conn.sender.city}</p>}
+                  <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{conn.sender.fullName}</p>
+                  <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.sender.username}</p>
+                  {conn.sender.city && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem' }}>📍 {conn.sender.city}</p>}
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button onClick={() => respond(conn.id, true)} style={{
-                    background: '#4caf50', color: '#fff', border: 'none',
+                    background: '#4caf50', color: 'var(--text-primary)', border: 'none',
                     padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                   }}>✅ Accept</button>
                   <button onClick={() => respond(conn.id, false)} style={{
-                    background: '#2a2a4a', color: '#fff', border: 'none',
+                    background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none',
                     padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
                   }}>❌ Decline</button>
                 </div>
@@ -158,14 +158,14 @@ function Connections() {
         {activeTab === 'sent' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {sent.length === 0 ? (
-              <p style={{ color: '#888' }}>No sent requests.</p>
+              <p style={{ color: 'var(--text-muted)' }}>No sent requests.</p>
             ) : sent.map(conn => (
               <div key={conn.id} style={cardStyle}>
                 <div style={avatarStyle}>{conn.receiver.fullName?.charAt(0)}</div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ color: '#fff', margin: 0, fontWeight: 'bold' }}>{conn.receiver.fullName}</p>
-                  <p style={{ color: '#888', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.receiver.username}</p>
-                  {conn.receiver.city && <p style={{ color: '#666', margin: 0, fontSize: '0.8rem' }}>📍 {conn.receiver.city}</p>}
+                  <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{conn.receiver.fullName}</p>
+                  <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.receiver.username}</p>
+                  {conn.receiver.city && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem' }}>📍 {conn.receiver.city}</p>}
                 </div>
                 <span style={{ color: '#f5a623', fontSize: '0.85rem', fontWeight: 'bold' }}>⏳ Pending</span>
               </div>
