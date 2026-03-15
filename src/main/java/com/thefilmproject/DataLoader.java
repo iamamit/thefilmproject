@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -149,7 +150,7 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
         long existingUsers = userRepo.count();
-        if (existingUsers >= 100) {
+        if (existingUsers >= 10) {
             System.out.println("✅ Data already seeded (" + existingUsers + " users). Skipping.");
             return;
         }
@@ -158,7 +159,7 @@ public class DataLoader implements CommandLineRunner {
         long startTime = System.currentTimeMillis();
 
         // Create 200 users (change to 2000 for full seed)
-        int TOTAL = 200;
+        int TOTAL = 50;
         List<User> users = new ArrayList<>();
 
         // Phase 1: Create users
@@ -211,8 +212,9 @@ public class DataLoader implements CommandLineRunner {
 
         // Phase 7: Add connections
         System.out.println("📝 Phase 7: Adding connections...");
+        Set<String> existingConnections = new HashSet<>();
         for (int i = 0; i < users.size(); i++) {
-            try { addConnections(users.get(i), users, i); } catch (Exception e) {}
+            try { addConnections(users.get(i), users, i, existingConnections); } catch (Exception e) {}
         }
 
         // Phase 8: Add messages
@@ -266,9 +268,8 @@ public class DataLoader implements CommandLineRunner {
         user.setCountry("India");
         user.setBio(bio);
         user.setAvailableForWork(random.nextBoolean());
-        user.setRoles(new HashSet<>(roles));
+        user.setRoles(new ArrayList<>(roles));
         user.setLanguages(new ArrayList<>(userLangs));
-        user.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(365)));
 
         return userRepo.save(user);
     }
@@ -300,8 +301,7 @@ public class DataLoader implements CommandLineRunner {
             post.setContent(content);
             post.setProject(isProject);
             if (isProject) post.setProjectType(PROJECT_TYPES[random.nextInt(PROJECT_TYPES.length)]);
-            post.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(30)));
-            post.setLikedByUserIds(new HashSet<>());
+                post.setLikedByUserIds(new HashSet<>());
 
             posts.add(postRepo.save(post));
         }
@@ -319,8 +319,7 @@ public class DataLoader implements CommandLineRunner {
             item.setCategory(data[2]);
             item.setVideoUrl(data[3]);
             item.setImageUrl("");
-            item.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(90)));
-            portfolioRepo.save(item);
+                portfolioRepo.save(item);
         }
     }
 
@@ -346,28 +345,24 @@ public class DataLoader implements CommandLineRunner {
             comment.setPost(shuffled.get(i));
             comment.setAuthor(user);
             comment.setContent(COMMENT_TEXTS[random.nextInt(COMMENT_TEXTS.length)]);
-            comment.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(20)));
-            commentRepo.save(comment);
+                commentRepo.save(comment);
         }
     }
 
-    private void addConnections(User user, List<User> allUsers, int userIndex) {
+    private void addConnections(User user, List<User> allUsers, int userIndex, Set<String> existingConnections) {
         int count = random.nextInt(8) + 2;
         for (int i = 0; i < count; i++) {
             int targetIndex = random.nextInt(allUsers.size());
             if (targetIndex == userIndex) continue;
             User target = allUsers.get(targetIndex);
-
-            boolean alreadyExists = connectionRepo.findAll().stream()
-                .anyMatch(c -> (c.getSender().getId().equals(user.getId()) && c.getReceiver().getId().equals(target.getId())) ||
-                               (c.getSender().getId().equals(target.getId()) && c.getReceiver().getId().equals(user.getId())));
-            if (alreadyExists) continue;
-
+            String key1 = user.getId() + "-" + target.getId();
+            String key2 = target.getId() + "-" + user.getId();
+            if (existingConnections.contains(key1) || existingConnections.contains(key2)) continue;
+            existingConnections.add(key1);
             Connection conn = new Connection();
             conn.setSender(user);
             conn.setReceiver(target);
             conn.setStatus(random.nextDouble() > 0.3 ? Connection.ConnectionStatus.ACCEPTED : Connection.ConnectionStatus.PENDING);
-            conn.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(60)));
             connectionRepo.save(conn);
         }
     }
@@ -384,8 +379,7 @@ public class DataLoader implements CommandLineRunner {
             msg.setReceiver(target);
             msg.setContent(MESSAGE_TEXTS[random.nextInt(MESSAGE_TEXTS.length)]);
             msg.setRead(random.nextBoolean());
-            msg.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(30)));
-            messageRepo.save(msg);
+                messageRepo.save(msg);
         }
     }
 }
