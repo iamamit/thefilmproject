@@ -13,8 +13,11 @@ const roleColors = {
 function Discover() {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('people');
   const [filters, setFilters] = useState({ role: '', city: '', search: '' });
+  const [companySearch, setCompanySearch] = useState('');
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const fullName = localStorage.getItem('fullName');
@@ -35,7 +38,16 @@ function Discover() {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const params = companySearch ? `?q=${companySearch}` : '';
+      const res = await api.get(`/companies${params}`);
+      setCompanies(res.data.content || res.data);
+    } catch {}
+  };
+
   useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchCompanies(); }, []);
 
   const cardStyle = {
     background: 'var(--bg-card)', borderRadius: 'var(--radius)',
@@ -45,6 +57,19 @@ function Discover() {
 
   return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
+      {/* Tabs */}
+      <div style={{ maxWidth: '1128px', margin: '0 auto 1.5rem', display: 'flex', gap: 0, borderBottom: '1px solid var(--border)' }}>
+        {['people', 'companies'].map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)} style={{
+            background: 'none', border: 'none', padding: '0.7rem 1.5rem',
+            color: activeTab === tab ? 'var(--accent)' : 'var(--text-muted)',
+            borderBottom: activeTab === tab ? '2px solid var(--accent)' : '2px solid transparent',
+            cursor: 'pointer', fontWeight: activeTab === tab ? '600' : '400',
+            textTransform: 'capitalize', fontSize: '0.95rem'
+          }}>{tab === 'people' ? '👥 People' : '🏢 Companies'}</button>
+        ))}
+      </div>
+
       <div style={{ maxWidth: '1128px', margin: '0 auto', display: 'grid', gridTemplateColumns: '280px 1fr 300px', gap: '1.5rem', alignItems: 'start' }}>
 
         {/* Left Sidebar - Profile Card */}
@@ -134,7 +159,60 @@ function Discover() {
           </div>
         </div>
 
-        {/* Center - Creator Feed */}
+        {/* Center - Creator Feed / Companies */}
+        <div>
+          {activeTab === 'companies' ? (
+            <div>
+              <div style={{ ...cardStyle, cursor: 'default', padding: '1rem', marginBottom: '1rem' }}>
+                <p style={{ color: 'var(--text-primary)', fontWeight: '600' }}>🏢 Companies & Studios</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Find production houses, studios and agencies</p>
+                <input
+                  value={companySearch}
+                  onChange={e => setCompanySearch(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && fetchCompanies()}
+                  placeholder="Search companies..."
+                  style={{
+                    width: '100%', padding: '0.5rem 0.8rem', borderRadius: '8px',
+                    border: '1px solid var(--border)', background: 'var(--bg-primary)',
+                    color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
+                    marginTop: '0.5rem', boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+              {companies.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>No companies found.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {companies.map(company => (
+                    <div key={company.id} onClick={() => navigate('/company/' + company.slug)}
+                      style={{ ...cardStyle, cursor: 'pointer', padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}>
+                      <div style={{
+                        width: '56px', height: '56px', borderRadius: '10px', flexShrink: 0,
+                        background: company.logoUrl ? 'transparent' : 'var(--accent)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '1.3rem', fontWeight: 'bold', color: '#fff', overflow: 'hidden'
+                      }}>
+                        {company.logoUrl
+                          ? <img src={company.logoUrl} alt={company.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          : company.name && company.name.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0 }}>{company.name}</p>
+                          {company.isVerified && <span style={{ color: '#0a66c2', fontSize: '0.8rem' }}>✓</span>}
+                          {company.isOfficial && <span style={{ color: '#ffd700', fontSize: '0.75rem' }}>★ Official</span>}
+                        </div>
+                        {company.type && <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.2rem 0 0' }}>{company.type.replace('_', ' ')}</p>}
+                        {company.city && <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.1rem 0 0' }}>📍 {company.city} · 👥 {company.followerCount} followers</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
         <div>
           <div style={{ ...cardStyle, cursor: 'default', padding: '1rem', marginBottom: '1rem' }}>
             <p style={{ color: 'var(--text-primary)', fontWeight: '600' }}>Discover Creators</p>
@@ -201,6 +279,8 @@ function Discover() {
           )}
         </div>
 
+          )}
+        </div>
         {/* Right Sidebar */}
         <div style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ ...cardStyle, cursor: 'default', padding: '1rem' }}>

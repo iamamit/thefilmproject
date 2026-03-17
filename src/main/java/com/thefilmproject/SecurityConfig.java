@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/posts/user/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/portfolio/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll()
                 .requestMatchers("/login/oauth2/**", "/oauth2/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
