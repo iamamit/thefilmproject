@@ -34,7 +34,19 @@ public class CommentController {
         comment.setPost(post);
         comment.setAuthor(author);
         comment.setContent(request.content());
-        return ResponseEntity.ok(commentRepo.save(comment));
+        Comment saved = commentRepo.save(comment);
+        // Notify post author about comment
+        if (comment.getParentComment() == null) {
+            notificationService.notifyComment(post.getAuthor(), user, postId);
+        } else {
+            // Notify parent comment author about reply
+            notificationService.notifyReply(comment.getParentComment().getAuthor(), user, postId);
+        }
+        // Notify post author about portfolio attachment
+        if (Boolean.TRUE.equals(comment.getSharePortfolio())) {
+            notificationService.notifyPortfolioComment(post.getAuthor(), user, postId);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     @DeleteMapping("/{commentId}")
