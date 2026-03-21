@@ -13,15 +13,18 @@ public class CommentController {
     private final PostRepository postRepo;
     private final UserRepository userRepo;
 
-    public CommentController(CommentRepository commentRepo, PostRepository postRepo, UserRepository userRepo) {
+    private final NotificationService notificationService;
+
+    public CommentController(CommentRepository commentRepo, PostRepository postRepo, UserRepository userRepo, NotificationService notificationService) {
         this.commentRepo = commentRepo;
         this.postRepo = postRepo;
         this.userRepo = userRepo;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
     public List<Comment> getComments(@PathVariable Long postId) {
-        return commentRepo.findByPostIdOrderByCreatedAtAsc(postId);
+        return commentRepo.findTopLevelByPostId(postId);
     }
 
     @PostMapping
