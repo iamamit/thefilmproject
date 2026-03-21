@@ -28,7 +28,7 @@ function Notifications() {
   useEffect(() => {
     if (!token) { navigate('/login'); return; }
     fetchNotifications();
-  }, []);
+  }, [token, navigate]);
 
   const fetchNotifications = async () => {
     try {

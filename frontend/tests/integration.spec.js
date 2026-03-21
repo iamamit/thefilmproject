@@ -267,19 +267,97 @@ test.describe.serial('CollabNow Integration Suite', () => {
   });
 
   // ─── NOTIFICATIONS ────────────────────────────────────────────────────────
-  test('13 · Check Notifications', async ({ page }) => {
+  test('13 · User2 likes User1 post → User1 gets notification', async ({ request }) => {
+    // First get User1's post
+    const postsRes = await request.get(`${API}/api/posts/user/${userId}`);
+    const posts = await postsRes.json();
+    const post = posts.content?.[0];
+    expect(post).toBeTruthy();
+
+    // User2 likes User1's post
+    const likeRes = await request.post(`${API}/api/posts/${post.id}/like`, {
+      headers: { Authorization: `Bearer ${token2}` }
+    });
+    expect(likeRes.status()).toBe(200);
+    console.log(`✅ User2 liked User1 post id=${post.id}`);
+
+    // Check User1 has a LIKE notification
+    const notifRes = await request.get(`${API}/api/notifications`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const notifs = await notifRes.json();
+    const likeNotif = notifs.content?.find(n => n.type === 'LIKE');
+    expect(likeNotif).toBeTruthy();
+    console.log(`✅ User1 received LIKE notification: "${likeNotif.message}"`);
+  });
+
+  test('14 · User2 comments on User1 post → User1 gets notification', async ({ request }) => {
+    const postsRes = await request.get(`${API}/api/posts/user/${userId}`);
+    const posts = await postsRes.json();
+    console.log(`User1 posts count: ${posts.content?.length}, userId: ${userId}`);
+    const post = posts.content?.[0];
+    expect(post).toBeTruthy();
+
+    const commentRes = await request.post(`${API}/api/posts/${post.id}/comments`, {
+      headers: { Authorization: `Bearer ${token2}`, 'Content-Type': 'application/json' },
+      data: { content: `Test comment from User2 ${TS}` }
+    });
+    expect(commentRes.status()).toBe(200);
+    console.log('✅ User2 commented on User1 post');
+
+    // Check User1 has a COMMENT notification
+    const notifRes = await request.get(`${API}/api/notifications`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const notifs = await notifRes.json();
+    const commentNotif = notifs.content?.find(n => n.type === 'COMMENT');
+    expect(commentNotif).toBeTruthy();
+    console.log(`✅ User1 received COMMENT notification: "${commentNotif.message}"`);
+  });
+
+  test('14b · User1 replies to comment → User2 gets notification', async ({ request }) => {
+    const postsRes = await request.get(`${API}/api/posts/user/${userId}`);
+    const posts = await postsRes.json();
+    const post = posts.content?.[0];
+
+    // Get comments on the post
+    const commentsRes = await request.get(`${API}/api/posts/${post.id}/comments`);
+    const comments = await commentsRes.json();
+    const comment = comments?.[0];
+
+    if (comment) {
+      const replyRes = await request.post(`${API}/api/posts/${post.id}/comments`, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        data: { content: `Test reply from User1 ${TS}`, parentCommentId: comment.id }
+      });
+      expect(replyRes.status()).toBe(200);
+      console.log('✅ User1 replied to User2 comment');
+
+      // Check User2 has a REPLY notification
+      const notifRes = await request.get(`${API}/api/notifications`, {
+        headers: { Authorization: `Bearer ${token2}` }
+      });
+      const notifs = await notifRes.json();
+      const replyNotif = notifs.content?.find(n => n.type === 'REPLY');
+      expect(replyNotif).toBeTruthy();
+      console.log(`✅ User2 received REPLY notification: "${replyNotif.message}"`);
+    } else {
+      console.log('⚠️ No comments found to reply to');
+    }
+  });
+
+  test('14c · Check notifications UI', async ({ page }) => {
     await injectAuth(page);
     await page.goto(`${BASE}/notifications`);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    // Should have at least some notifications (likes, comments, connection)
-    const notifCount = await page.locator('[style*="border-left"]').count();
-    console.log(`✅ Notifications page loaded - ${notifCount} notifications`);
+    const notifItems = await page.locator('[style*="border-left: 3px solid"]').count();
+    console.log(`✅ Notifications page - ${notifItems} unread notifications visible`);
     expect(page.url()).toContain('/notifications');
   });
 
-  test('14 · Mark All Notifications Read', async ({ page }) => {
+  test('14d · Mark all notifications read', async ({ page }) => {
     await injectAuth(page);
     await page.goto(`${BASE}/notifications`);
     await page.waitForLoadState('networkidle');
@@ -288,10 +366,39 @@ test.describe.serial('CollabNow Integration Suite', () => {
     const markAllBtn = page.locator('button:has-text("Mark all as read")');
     if (await markAllBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
       await markAllBtn.click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(800);
+      // Verify no more unread
+      const unread = await page.locator('[style*="border-left: 3px solid var(--accent)"]').count();
+      expect(unread).toBe(0);
       console.log('✅ All notifications marked as read');
     } else {
-      console.log('⚠️ No unread notifications');
+      console.log('⚠️ No unread notifications to mark');
+    }
+  });
+
+  test('14e · Connection request notification', async ({ request, page }) => {
+    // User2 sends connection to User1
+    const connRes = await request.post(`${API}/api/connections/request/${userId}`, {
+      headers: { Authorization: `Bearer ${token2}` }
+    });
+    // May already exist from test 11, that's ok
+    console.log(`Connection request status: ${connRes.status()}`);
+
+    // Check User1 has CONNECTION_REQUEST notification
+    const notifRes = await request.get(`${API}/api/notifications`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const notifs = await notifRes.json();
+    const connNotif = notifs.content?.find(n => n.type === 'CONNECTION_REQUEST');
+    if (connNotif) {
+      console.log(`✅ User1 received CONNECTION_REQUEST notification: "${connNotif.message}"`);
+      // Click notification → should navigate to /connections
+      await injectAuth(page);
+      await page.goto(`${BASE}/notifications`);
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(500);
+    } else {
+      console.log('⚠️ No CONNECTION_REQUEST notification found');
     }
   });
 

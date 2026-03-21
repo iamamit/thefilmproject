@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import Messages from './pages/Messages';
 import Connections from './pages/Connections';
+import Notifications from './pages/Notifications';
 import Navbar from './components/Navbar';
 
 const PrivateRoute = ({ children }) => {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/oauth2/callback" element={<OAuth2Callback />} />
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/discover" element={<Discover />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/profile/:username" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/edit-profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />

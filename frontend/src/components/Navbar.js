@@ -25,6 +25,11 @@ function Navbar() {
     return () => clearInterval(interval);
   }, [token]);
 
+  const handleBellClick = () => {
+    setUnreadCount(0);
+    navigate('/notifications');
+  };
+
   const logout = () => {
     localStorage.clear();
     document.cookie = 'JSESSIONID=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';
@@ -104,7 +109,7 @@ function Navbar() {
         {token ? (
           <>
             {/* Bell icon */}
-            <Link to="/notifications" style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '0.4rem', borderRadius: '50%', color: 'var(--text-secondary)', textDecoration: 'none' }}>
+            <div onClick={handleBellClick} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '0.4rem', borderRadius: '50%', color: 'var(--text-secondary)', cursor: 'pointer' }}>
               <span style={{ fontSize: '1.2rem' }}>🔔</span>
               {unreadCount > 0 && (
                 <span style={{
@@ -115,7 +120,7 @@ function Navbar() {
                   fontWeight: 'bold'
                 }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
               )}
-            </Link>
+            </div>
             <Link to={`/profile/${username}`} style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               gap: '0.1rem', textDecoration: 'none',

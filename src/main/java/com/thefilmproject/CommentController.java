@@ -26,26 +26,44 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<Comment> addComment(@PathVariable Long postId,
-                                               @RequestBody CommentRequest request,
+                                               @RequestBody java.util.Map<String, Object> body,
                                                Authentication auth) {
         User author = userRepo.findByEmail(auth.getName()).orElseThrow();
         Post post = postRepo.findById(postId).orElseThrow();
         Comment comment = new Comment();
         comment.setPost(post);
         comment.setAuthor(author);
-        comment.setContent(request.content());
+        comment.setContent((String) body.get("content"));
+        comment.setIsRead(false);
+
+        // Handle reply
+        Object parentIdObj = body.get("parentCommentId");
+        if (parentIdObj != null) {
+            Long parentId = Long.valueOf(parentIdObj.toString());
+            Comment parent = commentRepo.findById(parentId).orElse(null);
+            if (parent != null && parent.getParentComment() == null) {
+                comment.setParentComment(parent);
+            }
+        }
+
+        // Handle portfolio attachment
+        Object sharePortfolio = body.get("sharePortfolio");
+        if (Boolean.TRUE.equals(sharePortfolio)) {
+            comment.setSharePortfolio(true);
+        }
+
         Comment saved = commentRepo.save(comment);
-        // Notify post author about comment
+
+        // Send notifications
         if (comment.getParentComment() == null) {
-            notificationService.notifyComment(post.getAuthor(), user, postId);
+            notificationService.notifyComment(post.getAuthor(), author, postId);
         } else {
-            // Notify parent comment author about reply
-            notificationService.notifyReply(comment.getParentComment().getAuthor(), user, postId);
+            notificationService.notifyReply(comment.getParentComment().getAuthor(), author, postId);
         }
-        // Notify post author about portfolio attachment
         if (Boolean.TRUE.equals(comment.getSharePortfolio())) {
-            notificationService.notifyPortfolioComment(post.getAuthor(), user, postId);
+            notificationService.notifyPortfolioComment(post.getAuthor(), author, postId);
         }
+
         return ResponseEntity.ok(saved);
     }
 
@@ -62,5 +80,5 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
-    record CommentRequest(String content) {}
+
 }
