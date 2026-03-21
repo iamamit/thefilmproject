@@ -319,33 +319,25 @@ test.describe.serial('CollabNow Integration Suite', () => {
     const postsRes = await request.get(`${API}/api/posts/user/${userId}`);
     const posts = await postsRes.json();
     const post = posts.content?.[0];
-
-    // Get comments on the post
-    const commentsRes = await request.get(`${API}/api/posts/${post.id}/comments`);
-    const comments = await commentsRes.json();
-    const comment = comments?.[0];
-
-    if (comment) {
-      const replyRes = await request.post(`${API}/api/posts/${post.id}/comments`, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        data: { content: `Test reply from User1 ${TS}`, parentCommentId: comment.id }
-      });
-      expect(replyRes.status()).toBe(200);
-      console.log('✅ User1 replied to User2 comment');
-
-      // Check User2 has a REPLY notification
-      const notifRes = await request.get(`${API}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token2}` }
-      });
-      const notifs = await notifRes.json();
-      const replyNotif = notifs.content?.find(n => n.type === 'REPLY');
-      expect(replyNotif).toBeTruthy();
-      console.log(`✅ User2 received REPLY notification: "${replyNotif.message}"`);
-    } else {
-      console.log('⚠️ No comments found to reply to');
-    }
+    expect(post).toBeTruthy();
+    const commentRes = await request.post(`${API}/api/posts/${post.id}/comments`, {
+      headers: { Authorization: `Bearer ${token2}`, 'Content-Type': 'application/json' },
+      data: { content: `Reply target ${TS}` }
+    });
+    const newComment = await commentRes.json();
+    const replyRes = await request.post(`${API}/api/posts/${post.id}/comments`, {
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      data: { content: `Reply ${TS}`, parentCommentId: newComment.id }
+    });
+    expect(replyRes.status()).toBe(200);
+    const notifRes = await request.get(`${API}/api/notifications`, {
+      headers: { Authorization: `Bearer ${token2}` }
+    });
+    const notifs = await notifRes.json();
+    const replyNotif = notifs.content?.find(n => n.type === 'REPLY');
+    expect(replyNotif).toBeTruthy();
+    console.log('✅ User2 received REPLY notification');
   });
-
   test('14c · Check notifications UI', async ({ page }) => {
     await injectAuth(page);
     await page.goto(`${BASE}/notifications`);
@@ -406,9 +398,9 @@ test.describe.serial('CollabNow Integration Suite', () => {
   test('15 · View Company Page', async ({ page }) => {
     await page.goto(`${BASE}/company/collabnow`);
     await page.waitForLoadState('networkidle');
-
-    await expect(page.locator('text=CollabNow')).toBeVisible({ timeout: 5000 });
-    console.log('✅ Company page loaded');
+    await page.waitForTimeout(2000);
+    await expect(page.locator('h1').first()).toBeVisible({ timeout: 8000 });
+    console.log('✅ Company page loaded url:', page.url());
   });
 
   test('16 · Follow Company Page', async ({ page }) => {

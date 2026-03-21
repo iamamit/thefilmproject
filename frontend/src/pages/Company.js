@@ -27,8 +27,10 @@ function Company() {
       setCompany(res.data);
       setFollowers(res.data.followerCount);
       if (token) {
-        const followRes = await api.get('/companies/' + slug + '/follow');
-        setFollowing(followRes.data.following);
+        try {
+          const followRes = await api.get('/companies/' + slug + '/follow');
+          setFollowing(followRes.data.following);
+        } catch {}
       }
     } catch { navigate('/'); }
     finally { setLoading(false); }

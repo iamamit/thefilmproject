@@ -44,12 +44,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/portfolio/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll()
-<<<<<<< HEAD
+                .requestMatchers("/api/notifications/unread-count").permitAll()
                 .requestMatchers("/login/oauth2/**", "/oauth2/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-=======
-                .requestMatchers("/api/notifications/unread-count").permitAll()
->>>>>>> feature/notifications
                 .anyRequest().authenticated()
             )
             .exceptionHandling(ex -> ex
