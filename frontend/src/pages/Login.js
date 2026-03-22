@@ -41,7 +41,7 @@ function Login() {
       else localStorage.removeItem('profilePhoto');
       navigate('/home');
     } catch (err) {
-      setError(err.response?.data || 'Invalid email or password');
+      setError('Invalid email or password');
     } finally { setLoading(false); }
   };
 

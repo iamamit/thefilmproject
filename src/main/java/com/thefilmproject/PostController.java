@@ -1,5 +1,4 @@
 package com.thefilmproject;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +8,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
-
     private final PostRepository postRepo;
     private final UserRepository userRepo;
+    private final NotificationService notificationService;
 
-    public PostController(PostRepository postRepo, UserRepository userRepo) {
+    public PostController(PostRepository postRepo, UserRepository userRepo, NotificationService notificationService) {
         this.postRepo = postRepo;
         this.userRepo = userRepo;
+        this.notificationService = notificationService;
     }
 
     @PostMapping
@@ -48,6 +48,8 @@ public class PostController {
             post.getLikedByUserIds().remove(user.getId());
         } else {
             post.getLikedByUserIds().add(user.getId());
+            // Notify post author
+            notificationService.notifyLike(post.getAuthor(), user, postId);
         }
         return ResponseEntity.ok(postRepo.save(post));
     }

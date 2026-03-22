@@ -20,11 +20,13 @@ public class UserController {
     private final PortfolioRepository portfolioRepository;
     private final CommentRepository commentRepository;
     private final MessageRepository messageRepository;
+    private final NotificationRepository notificationRepository;
 
     public UserController(UserRepository userRepository, ConnectionRepository connectionRepository,
                           UserSkillRepository skillRepository, PostRepository postRepository,
                           PortfolioRepository portfolioRepository, CommentRepository commentRepository,
-                          MessageRepository messageRepository) {
+                          MessageRepository messageRepository,
+                          NotificationRepository notificationRepository) {
         this.userRepository = userRepository;
         this.connectionRepository = connectionRepository;
         this.skillRepository = skillRepository;
@@ -32,6 +34,7 @@ public class UserController {
         this.portfolioRepository = portfolioRepository;
         this.commentRepository = commentRepository;
         this.messageRepository = messageRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     // ─── PUBLIC: Discover creators ─────────────────────────────────
@@ -103,6 +106,8 @@ public class UserController {
         if (!userRepository.existsById(id)) return ResponseEntity.notFound().build();
         // Delete in reverse dependency order
         messageRepository.deleteBySenderIdOrReceiverId(id, id);
+        notificationRepository.deleteByRecipientId(id);
+        notificationRepository.deleteBySenderId(id);
         commentRepository.deleteByAuthorId(id);
         skillRepository.deleteByUserId(id);
         portfolioRepository.deleteByUserId(id);

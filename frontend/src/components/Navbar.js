@@ -1,4 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import api from '../api';
 import { useTheme } from '../ThemeContext';
 
 function Navbar() {
@@ -8,6 +10,25 @@ function Navbar() {
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const fullName = localStorage.getItem('fullName');
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (!token) return;
+    const fetchUnread = async () => {
+      try {
+        const res = await api.get('/notifications/unread-count');
+        setUnreadCount(res.data.count);
+      } catch {}
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000); // poll every 30s
+    return () => clearInterval(interval);
+  }, [token]);
+
+  const handleBellClick = () => {
+    setUnreadCount(0);
+    navigate('/notifications');
+  };
 
   const logout = () => {
     localStorage.clear();
@@ -87,6 +108,19 @@ function Navbar() {
 
         {token ? (
           <>
+            {/* Bell icon */}
+            <div onClick={handleBellClick} style={{ position: 'relative', display: 'flex', alignItems: 'center', padding: '0.4rem', borderRadius: '50%', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              <span style={{ fontSize: '1.2rem' }}>🔔</span>
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: '0', right: '0',
+                  background: '#e74c3c', color: '#fff', borderRadius: '50%',
+                  width: '16px', height: '16px', fontSize: '0.65rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: 'bold'
+                }}>{unreadCount > 9 ? '9+' : unreadCount}</span>
+              )}
+            </div>
             <Link to={`/profile/${username}`} style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               gap: '0.1rem', textDecoration: 'none',
