@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
@@ -26,12 +26,108 @@ const projectColors = {
   DIGITAL:     { bg: '#2ecc71', light: '#e2faeb', label: '🎮 Digital Project' },
 };
 
+function PortfolioPreview({ username, comment, isOwner, onCandidateStatus, hideTimeoutRef, setHoveredPortfolio }) {
+  const [portfolio, setPortfolio] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!username) return;
+    api.get(`/portfolio/${username}`)
+      .then(res => setPortfolio(res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [username]);
+
+  const getYouTubeId = (url) => {
+    if (!url) return null;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
+    return match ? match[1] : null;
+  };
+
+  const categoryColors = {
+    'Short Film': '#0a66c2', 'Music Video': '#9b59b6', 'Documentary': '#1abc9c',
+    'Ad Film': '#f39c12', 'Reel': '#e67e22', 'Photography': '#e91e63',
+    'Theatre': '#e74c3c', 'Digital': '#3498db',
+  };
+
+  return (
+    <div 
+      onMouseEnter={() => { if(hideTimeoutRef) clearTimeout(hideTimeoutRef.current); }}
+      onMouseLeave={() => { if(hideTimeoutRef) hideTimeoutRef.current = setTimeout(() => setHoveredPortfolio(null), 500); }}
+      style={{
+      position: 'absolute', bottom: '110%', left: 0, zIndex: 200,
+      background: 'var(--bg-card)', border: '1px solid var(--border)',
+      borderRadius: '16px', width: '360px', maxHeight: '420px',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)', overflow: 'hidden',
+      display: 'flex', flexDirection: 'column'
+    }}>
+      <div style={{ padding: '0.8rem 1rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <p style={{ margin: 0, fontWeight: '700', color: 'var(--text-primary)', fontSize: '0.9rem' }}>🎬 {comment.author?.fullName}&apos;s Portfolio</p>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.75rem' }}>@{username}</p>
+        </div>
+        {isOwner && (
+          <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <button onClick={() => onCandidateStatus(comment.id, comment.candidateStatus === 'CONSIDERABLE' ? null : 'CONSIDERABLE')} style={{
+              padding: '0.3rem 0.6rem', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.7rem',
+              background: comment.candidateStatus === 'CONSIDERABLE' ? '#2ecc71' : 'var(--bg-hover)',
+              color: comment.candidateStatus === 'CONSIDERABLE' ? '#fff' : 'var(--text-secondary)'
+            }}>⭐ Considerable</button>
+            <button onClick={() => onCandidateStatus(comment.id, comment.candidateStatus === 'NOT_INTERESTED' ? null : 'NOT_INTERESTED')} style={{
+              padding: '0.3rem 0.6rem', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '0.7rem',
+              background: comment.candidateStatus === 'NOT_INTERESTED' ? '#e74c3c' : 'var(--bg-hover)',
+              color: comment.candidateStatus === 'NOT_INTERESTED' ? '#fff' : 'var(--text-secondary)'
+            }}>✗ Not Interested</button>
+          </div>
+        )}
+      </div>
+      <div style={{ overflowY: 'auto', flex: 1, padding: '0.6rem' }}>
+        {loading ? (
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>Loading...</p>
+        ) : portfolio.length === 0 ? (
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center', padding: '1rem' }}>No portfolio items yet.</p>
+        ) : (
+          portfolio.map(item => {
+            const ytId = getYouTubeId(item.videoUrl);
+            const catColor = categoryColors[item.category] || '#0a66c2';
+            return (
+              <div key={item.id} style={{ background: 'var(--bg-primary)', borderRadius: '10px', overflow: 'hidden', marginBottom: '0.6rem', border: '1px solid var(--border)' }}>
+                <div style={{ background: catColor, padding: '0.3rem 0.7rem' }}>
+                  <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: '700' }}>{item.category}</span>
+                </div>
+                <div style={{ padding: '0.5rem 0.7rem' }}>
+                  <p style={{ margin: '0 0 0.2rem', fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.82rem' }}>{item.title}</p>
+                  <p style={{ margin: '0 0 0.4rem', color: 'var(--text-muted)', fontSize: '0.75rem', lineHeight: '1.4' }}>{item.description?.substring(0, 80)}...</p>
+                  {ytId && (
+                    <a href={item.videoUrl} target="_blank" rel="noreferrer">
+                      <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt={item.title} style={{ width: '100%', borderRadius: '6px', cursor: 'pointer' }} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
 function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommentAdded }) {
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [loadingComments, setLoadingComments] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
+  const [replyingTo, setReplyingTo] = useState(null); // commentId being replied to
+  const [replyText, setReplyText] = useState('');
+  const [replies, setReplies] = useState({}); // { commentId: [replies] }
+  const [showReplies, setShowReplies] = useState({}); // { commentId: bool }
+  const [sharePortfolio, setSharePortfolio] = useState(false);
+  const [myPortfolio, setMyPortfolio] = useState([]);
+  const [selectedPortfolioItem, setSelectedPortfolioItem] = useState(null);
+  const [hoveredPortfolio, setHoveredPortfolio] = useState(null); // for preview
+  const hideTimeoutRef = useRef(null);
   const navigate = useNavigate();
   const isLiked = post.likedByUserIds?.includes(myId);
   const isOwner = post.author?.username === myUsername;
@@ -54,14 +150,55 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
     setShowComments(!showComments);
   };
 
+  const fetchMyPortfolio = async () => {
+    if (myPortfolio.length > 0) return;
+    try {
+      const username = localStorage.getItem('username');
+      const res = await api.get(`/portfolio/${username}`);
+      setMyPortfolio(res.data);
+    } catch {}
+  };
+
   const submitComment = async () => {
     if (!commentText.trim() || !token) return;
     try {
-      const res = await api.post(`/posts/${post.id}/comments`, { content: commentText });
+      const body = { content: commentText };
+      if (sharePortfolio) {
+        body.sharePortfolio = true;
+      }
+      const res = await api.post(`/posts/${post.id}/comments`, body);
       setComments([...comments, res.data]);
       setCommentCount(commentCount + 1);
       setCommentText('');
+      setSharePortfolio(false);
+      setSelectedPortfolioItem(null);
+      if (onCommentAdded) onCommentAdded();
     } catch (err) { console.error(err); }
+  };
+
+  const submitReply = async (parentCommentId) => {
+    if (!replyText.trim() || !token) return;
+    try {
+      const res = await api.post(`/posts/${post.id}/comments`, {
+        content: replyText,
+        parentCommentId
+      });
+      setReplies(prev => ({ ...prev, [parentCommentId]: [...(prev[parentCommentId] || []), res.data] }));
+      setReplyingTo(null);
+      setReplyText('');
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchReplies = async (commentId) => {
+    if (replies[commentId]) {
+      setShowReplies(prev => ({ ...prev, [commentId]: !prev[commentId] }));
+      return;
+    }
+    try {
+      const res = await api.get(`/posts/${post.id}/comments/${commentId}/replies`);
+      setReplies(prev => ({ ...prev, [commentId]: res.data }));
+      setShowReplies(prev => ({ ...prev, [commentId]: true }));
+    } catch {}
   };
 
   const deleteComment = async (commentId) => {
@@ -70,6 +207,27 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
       setComments(comments.filter(c => c.id !== commentId));
       setCommentCount(commentCount - 1);
     } catch (err) { console.error(err); }
+  };
+
+  const markRead = async (commentId) => {
+    try {
+      await api.patch(`/posts/${post.id}/comments/${commentId}/read`);
+      setComments(comments.map(c => c.id === commentId ? {...c, isRead: true} : c));
+    } catch {}
+  };
+
+  const markAllRead = async () => {
+    try {
+      await api.patch(`/posts/${post.id}/comments/read-all`);
+      setComments(comments.map(c => ({...c, isRead: true})));
+    } catch {}
+  };
+
+  const updateCandidateStatus = async (commentId, status) => {
+    try {
+      await api.patch(`/posts/${post.id}/comments/${commentId}/candidate`, { status });
+      setComments(comments.map(c => c.id === commentId ? {...c, candidateStatus: status} : c));
+    } catch {}
   };
 
   const cardStyle = {
@@ -177,31 +335,170 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.8rem' }}>No comments yet. Be first!</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '0.8rem' }}>
+              {/* Mark all read button for post owner */}
+              {isOwner && comments.some(c => !c.isRead) && (
+                <button onClick={markAllRead} style={{
+                  background: 'none', border: 'none', color: 'var(--accent)',
+                  cursor: 'pointer', fontSize: '0.75rem', textAlign: 'right', padding: 0
+                }}>✓ Mark all as read</button>
+              )}
               {comments.map(comment => (
-                <div key={comment.id} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <div style={{
-                    width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                    background: roleColors[comment.author?.roles?.[0]] || '#0a66c2',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.8rem', fontWeight: 'bold', color: '#fff', cursor: 'pointer'
-                  }} onClick={() => navigate(`/profile/${comment.author?.username}`)}>
-                    {comment.author?.fullName?.charAt(0)}
-                  </div>
-                  <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '0 12px 12px 12px', padding: '0.5rem 0.8rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>{comment.author?.fullName}</span>
-                      <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                        <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{timeAgo(comment.createdAt)}</span>
-                        {comment.author?.username === myUsername && (
-                          <button onClick={() => deleteComment(comment.id)} style={{
-                            background: 'none', border: 'none', color: 'var(--text-muted)',
-                            cursor: 'pointer', fontSize: '0.75rem', padding: '0'
-                          }}>🗑️</button>
+                <div key={comment.id}>
+                  {/* Top level comment */}
+                  <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
+                    <div style={{
+                      width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                      background: roleColors[comment.author?.roles?.[0]] || '#0a66c2',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '0.8rem', fontWeight: 'bold', color: '#fff', cursor: 'pointer'
+                    }} onClick={() => navigate(`/profile/${comment.author?.username}`)}>
+                      {comment.author?.profilePhotoUrl
+                        ? <img src={comment.author.profilePhotoUrl} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                        : comment.author?.fullName?.charAt(0)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{
+                        background: 'var(--bg-card)', borderRadius: '0 12px 12px 12px',
+                        padding: '0.5rem 0.8rem',
+                        border: isOwner && !comment.isRead ? '1px solid var(--accent)' : '1px solid transparent'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>{comment.author?.fullName}</span>
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{timeAgo(comment.createdAt)}</span>
+                            {/* Unread indicator for post owner */}
+                            {isOwner && !comment.isRead && (
+                              <button onClick={() => markRead(comment.id)} style={{
+                                background: 'var(--accent)', border: 'none', color: '#fff',
+                                cursor: 'pointer', fontSize: '0.65rem', borderRadius: '10px',
+                                padding: '0.1rem 0.4rem'
+                              }}>NEW</button>
+                            )}
+                            {comment.author?.username === myUsername && (
+                              <button onClick={() => deleteComment(comment.id)} style={{
+                                background: 'none', border: 'none', color: 'var(--text-muted)',
+                                cursor: 'pointer', fontSize: '0.75rem', padding: '0'
+                              }}>🗑️</button>
+                            )}
+                          </div>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0.2rem 0 0' }}>{comment.content}</p>
+                        {/* Portfolio attachment */}
+                        {comment.sharePortfolio && (
+                          <div style={{ position: 'relative', display: 'inline-block', marginTop: '0.4rem' }}>
+                            <span
+                              onMouseEnter={() => {
+  if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+  setHoveredPortfolio(comment.id);
+}}
+                              onMouseLeave={() => {
+  hideTimeoutRef.current = setTimeout(() => {
+    setHoveredPortfolio(null);
+  }, 300);
+}}
+                              style={{
+                                display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                                background: 'var(--bg-hover)', borderRadius: '12px',
+                                padding: '0.2rem 0.6rem', fontSize: '0.75rem',
+                                color: 'var(--accent)', cursor: 'pointer', border: '1px solid var(--border)'
+                              }}>
+                              🎬 View Portfolio
+                            </span>
+                            {/* Portfolio hover preview */}
+                            {hoveredPortfolio === comment.id && (
+                              <PortfolioPreview
+                                username={comment.author?.username}
+                                comment={comment}
+                                isOwner={isOwner}
+                                onCandidateStatus={updateCandidateStatus}
+                                onClose={() => setHoveredPortfolio(null)}
+                                hideTimeoutRef={hideTimeoutRef}
+                                setHoveredPortfolio={setHoveredPortfolio}
+                              />
+                            )}
+                          </div>
+                        )}
+                        {/* Candidate status badge - only visible to post owner */}
+                        {isOwner && comment.candidateStatus && (
+                          <span style={{
+                            display: 'inline-block', marginTop: '0.3rem', fontSize: '0.7rem',
+                            padding: '0.15rem 0.5rem', borderRadius: '10px',
+                            background: comment.candidateStatus === 'CONSIDERABLE' ? '#2ecc7133' : '#e74c3c33',
+                            color: comment.candidateStatus === 'CONSIDERABLE' ? '#2ecc71' : '#e74c3c'
+                          }}>
+                            {comment.candidateStatus === 'CONSIDERABLE' ? '⭐ Considerable' : '✗ Not Interested'}
+                          </span>
                         )}
                       </div>
+                      {/* Reply button */}
+                      <div style={{ display: 'flex', gap: '0.8rem', paddingLeft: '0.5rem', marginTop: '0.2rem' }}>
+                        <button onClick={() => { setReplyingTo(replyingTo === comment.id ? null : comment.id); setReplyText(''); }} style={{
+                          background: 'none', border: 'none', color: 'var(--text-muted)',
+                          cursor: 'pointer', fontSize: '0.75rem', padding: 0
+                        }}>↩ Reply</button>
+                        {/* Show replies toggle */}
+                        <button onClick={() => fetchReplies(comment.id)} style={{
+                          background: 'none', border: 'none', color: 'var(--text-muted)',
+                          cursor: 'pointer', fontSize: '0.75rem', padding: 0
+                        }}>
+                          {showReplies[comment.id] ? '▲ Hide replies' : '▼ Show replies'}
+                        </button>
+                      </div>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0.2rem 0 0' }}>{comment.content}</p>
                   </div>
+
+                  {/* Reply input */}
+                  {replyingTo === comment.id && (
+                    <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginTop: '0.4rem', paddingLeft: '2.5rem' }}>
+                      <input
+                        value={replyText}
+                        onChange={e => setReplyText(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && submitReply(comment.id)}
+                        placeholder={`Reply to ${comment.author?.fullName}...`}
+                        autoFocus
+                        style={{
+                          flex: 1, padding: '0.4rem 0.8rem', borderRadius: '20px',
+                          border: '1px solid var(--border)', background: 'var(--bg-card)',
+                          color: 'var(--text-primary)', fontSize: '0.8rem', outline: 'none',
+                        }}
+                      />
+                      <button onClick={() => submitReply(comment.id)} disabled={!replyText.trim()} style={{
+                        background: replyText.trim() ? 'var(--accent)' : 'var(--border)',
+                        color: '#fff', border: 'none', borderRadius: '20px',
+                        padding: '0.3rem 0.8rem', cursor: replyText.trim() ? 'pointer' : 'default',
+                        fontSize: '0.8rem'
+                      }}>Reply</button>
+                    </div>
+                  )}
+
+                  {/* Replies */}
+                  {showReplies[comment.id] && replies[comment.id]?.map(reply => (
+                    <div key={reply.id} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', marginTop: '0.4rem', paddingLeft: '2.5rem' }}>
+                      <div style={{
+                        width: '26px', height: '26px', borderRadius: '50%', flexShrink: 0,
+                        background: roleColors[reply.author?.roles?.[0]] || '#0a66c2',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.7rem', fontWeight: 'bold', color: '#fff', cursor: 'pointer'
+                      }} onClick={() => navigate(`/profile/${reply.author?.username}`)}>
+                        {reply.author?.fullName?.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '0 10px 10px 10px', padding: '0.4rem 0.7rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.8rem' }}>{reply.author?.fullName}</span>
+                          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>{timeAgo(reply.createdAt)}</span>
+                            {reply.author?.username === myUsername && (
+                              <button onClick={() => deleteComment(reply.id)} style={{
+                                background: 'none', border: 'none', color: 'var(--text-muted)',
+                                cursor: 'pointer', fontSize: '0.7rem', padding: 0
+                              }}>🗑️</button>
+                            )}
+                          </div>
+                        </div>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '0.15rem 0 0' }}>{reply.content}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
@@ -209,31 +506,48 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
 
           {/* Add comment */}
           {token && (
-            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
-              }}>{(fullName || myUsername)?.charAt(0).toUpperCase()}</div>
-              <div style={{ flex: 1, display: 'flex', gap: '0.4rem' }}>
-                <input
-                  value={commentText}
-                  onChange={e => setCommentText(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && submitComment()}
-                  placeholder="Add a comment..."
-                  style={{
-                    flex: 1, padding: '0.5rem 0.8rem', borderRadius: '20px',
-                    border: '1px solid var(--border)', background: 'var(--bg-card)',
-                    color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
-                  }}
-                />
-                <button onClick={submitComment} disabled={!commentText.trim()} style={{
-                  background: commentText.trim() ? 'var(--accent)' : 'var(--border)',
-                  color: '#fff', border: 'none', borderRadius: '20px',
-                  padding: '0.4rem 0.8rem', cursor: commentText.trim() ? 'pointer' : 'default',
-                  fontSize: '0.8rem', fontWeight: '600',
-                }}>Post</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                <div style={{
+                  width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                  background: 'var(--accent)', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
+                }}>{(fullName || myUsername)?.charAt(0).toUpperCase()}</div>
+                <div style={{ flex: 1, display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                  <input
+                    value={commentText}
+                    onChange={e => setCommentText(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && submitComment()}
+                    placeholder="Add a comment..."
+                    style={{
+                      flex: 1, padding: '0.5rem 0.8rem', borderRadius: '20px',
+                      border: '1px solid var(--border)', background: 'var(--bg-card)',
+                      color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
+                    }}
+                  />
+                  {/* Portfolio toggle for project posts */}
+                  {post.project && (
+                    <button onClick={() => setSharePortfolio(!sharePortfolio)} style={{
+                      background: sharePortfolio ? 'var(--accent)' : 'var(--bg-hover)',
+                      border: '1px solid var(--border)', color: sharePortfolio ? '#fff' : 'var(--text-muted)',
+                      cursor: 'pointer', fontSize: '0.75rem', borderRadius: '20px',
+                      padding: '0.4rem 0.7rem', whiteSpace: 'nowrap'
+                    }}>🎬 {sharePortfolio ? 'Portfolio ✓' : 'Portfolio'}</button>
+                  )}
+                  <button onClick={submitComment} disabled={!commentText.trim()} style={{
+                    background: commentText.trim() ? 'var(--accent)' : 'var(--border)',
+                    color: '#fff', border: 'none', borderRadius: '20px',
+                    padding: '0.4rem 0.8rem', cursor: commentText.trim() ? 'pointer' : 'default',
+                    fontSize: '0.8rem', fontWeight: '600',
+                  }}>Post</button>
+                </div>
               </div>
+              {/* Portfolio indicator */}
+              {sharePortfolio && (
+                <div style={{ paddingLeft: '2.4rem' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--accent)' }}>🎬 Your portfolio will be attached to this comment</span>
+                </div>
+              )}
             </div>
           )}
         </div>
