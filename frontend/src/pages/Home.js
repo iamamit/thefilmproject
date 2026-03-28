@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const roleColors = {
   DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
@@ -25,6 +26,22 @@ const projectColors = {
   THEATRE:     { bg: '#e74c3c', light: '#fde8e8', label: '🎭 Theatre Project' },
   DIGITAL:     { bg: '#2ecc71', light: '#e2faeb', label: '🎮 Digital Project' },
 };
+
+function UserAvatar({ photoUrl, name, size = 44, color = '#0a66c2', onClick }) {
+  const letter = name?.charAt(0)?.toUpperCase() || '?';
+  return photoUrl ? (
+    <img src={photoUrl} alt={name}
+      onClick={onClick}
+      style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', flexShrink: 0, cursor: onClick ? 'pointer' : 'default' }} />
+  ) : (
+    <div onClick={onClick} style={{
+      width: size, height: size, borderRadius: '50%', flexShrink: 0,
+      background: color, display: 'flex', alignItems: 'center',
+      justifyContent: 'center', fontSize: size * 0.35, fontWeight: 'bold', color: '#fff',
+      cursor: onClick ? 'pointer' : 'default',
+    }}>{letter}</div>
+  );
+}
 
 function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommentAdded }) {
   const [showComments, setShowComments] = useState(false);
@@ -93,11 +110,7 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
           <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', cursor: 'pointer' }}
             onClick={() => navigate(`/profile/${post.author?.username}`)}>
-            <div style={{
-              width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
-              background: authorColor, display: 'flex', alignItems: 'center',
-              justifyContent: 'center', fontSize: '1.1rem', fontWeight: 'bold', color: '#fff'
-            }}>{post.author?.fullName?.charAt(0)}</div>
+            <UserAvatar photoUrl={post.author?.profilePhotoUrl} name={post.author?.fullName} size={44} color={authorColor} />
             <div>
               <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0, fontSize: '0.95rem' }}>{post.author?.fullName}</p>
               <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -120,6 +133,19 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
         </div>
 
         {/* Content */}
+        {post.imageUrl && (
+          <img
+            src={post.imageUrl}
+            alt="post"
+            style={{
+              width: '100%',
+              borderRadius: '8px',
+              marginBottom: '0.75rem',
+              maxHeight: '400px',
+              objectFit: 'cover',
+            }}
+          />
+        )}
         <p style={{ color: 'var(--text-primary)', lineHeight: '1.6', fontSize: '0.95rem', whiteSpace: 'pre-wrap', marginBottom: '0.8rem' }}>{post.content}</p>
 
         {/* Stats row */}
@@ -179,14 +205,13 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginBottom: '0.8rem' }}>
               {comments.map(comment => (
                 <div key={comment.id} style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start' }}>
-                  <div style={{
-                    width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                    background: roleColors[comment.author?.roles?.[0]] || '#0a66c2',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '0.8rem', fontWeight: 'bold', color: '#fff', cursor: 'pointer'
-                  }} onClick={() => navigate(`/profile/${comment.author?.username}`)}>
-                    {comment.author?.fullName?.charAt(0)}
-                  </div>
+                  <UserAvatar
+                    photoUrl={comment.author?.profilePhotoUrl}
+                    name={comment.author?.fullName}
+                    size={32}
+                    color={roleColors[comment.author?.roles?.[0]] || '#0a66c2'}
+                    onClick={() => navigate(`/profile/${comment.author?.username}`)}
+                  />
                   <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '0 12px 12px 12px', padding: '0.5rem 0.8rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>{comment.author?.fullName}</span>
@@ -210,11 +235,7 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
           {/* Add comment */}
           {token && (
             <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
-              }}>{(fullName || myUsername)?.charAt(0).toUpperCase()}</div>
+              <UserAvatar photoUrl={localStorage.getItem('profilePhoto')} name={fullName || myUsername} size={32} />
               <div style={{ flex: 1, display: 'flex', gap: '0.4rem' }}>
                 <input
                   value={commentText}
@@ -243,10 +264,12 @@ function PostCard({ post, myId, myUsername, fullName, onLike, onDelete, onCommen
 }
 
 function Home() {
+  usePageMeta('Home');
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [postContent, setPostContent] = useState('');
+  const [postImageUrl, setPostImageUrl] = useState('');
   const [posting, setPosting] = useState(false);
   const [showPostBox, setShowPostBox] = useState(false);
   const [isProject, setIsProject] = useState(false);
@@ -270,8 +293,9 @@ function Home() {
     if (!postContent.trim()) return;
     setPosting(true);
     try {
-      await api.post('/posts', { content: postContent, isProject: isProject, projectType: isProject ? projectType : null });
+      await api.post('/posts', { content: postContent, isProject: isProject, projectType: isProject ? projectType : null, imageUrl: postImageUrl || null });
       setPostContent('');
+      setPostImageUrl('');
       setIsProject(false);
       setProjectType('FILM');
       setShowPostBox(false);
@@ -310,13 +334,9 @@ function Home() {
             <div style={cardStyle}>
               <div style={{ height: '60px', background: 'linear-gradient(135deg, #b0bec5, #78909c)' }} />
               <div style={{ padding: '0 1rem 1rem' }}>
-                <div style={{
-                  width: '56px', height: '56px', borderRadius: '50%',
-                  background: 'var(--accent)', border: '3px solid var(--bg-card)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.4rem', fontWeight: 'bold', color: '#fff',
-                  marginTop: '-28px', marginBottom: '0.5rem'
-                }}>{(fullName || username)?.charAt(0).toUpperCase()}</div>
+                <div style={{ marginTop: '-28px', marginBottom: '0.5rem', border: '3px solid var(--bg-card)', borderRadius: '50%', display: 'inline-block' }}>
+                  <UserAvatar photoUrl={localStorage.getItem('profilePhoto')} name={fullName || username} size={56} />
+                </div>
                 <p style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.95rem' }}>{fullName}</p>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.8rem' }}>@{username}</p>
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -374,11 +394,7 @@ function Home() {
           {token && (
             <div style={{ ...cardStyle, padding: '1rem' }}>
               <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
-                  background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: '1.1rem', fontWeight: 'bold', color: '#fff'
-                }}>{(fullName || username)?.charAt(0).toUpperCase()}</div>
+                <UserAvatar photoUrl={localStorage.getItem('profilePhoto')} name={fullName || username} size={44} />
                 <button onClick={() => setShowPostBox(true)} style={{
                   flex: 1, padding: '0.7rem 1rem', borderRadius: '24px',
                   border: '1px solid var(--border)', background: 'var(--bg-primary)',
@@ -388,11 +404,38 @@ function Home() {
               {showPostBox && (
                 <div style={{ marginTop: '1rem' }}>
                   <textarea value={postContent} onChange={e => setPostContent(e.target.value)}
-                    placeholder="What's on your mind?" autoFocus rows={4}
+                    placeholder="What's on your mind?" autoFocus rows={4} maxLength={3000}
                     style={{
                       width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)',
                       border: '1px solid var(--border)', background: 'var(--bg-primary)',
                       color: 'var(--text-primary)', fontSize: '0.9rem', resize: 'vertical', fontFamily: 'inherit',
+                    }}
+                  />
+                  <div style={{
+                    textAlign: 'right',
+                    fontSize: '0.75rem',
+                    color: postContent.length > 2800 ? '#cc0000' : 'var(--text-muted)',
+                    marginTop: '0.25rem',
+                    marginBottom: '0.5rem',
+                  }}>
+                    {postContent.length}/3000
+                  </div>
+                  <input
+                    type="url"
+                    placeholder="Image URL (optional)"
+                    value={postImageUrl}
+                    onChange={e => setPostImageUrl(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border)',
+                      background: 'var(--bg-input)',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.85rem',
+                      marginBottom: '0.5rem',
+                      boxSizing: 'border-box',
+                      fontFamily: 'DM Sans, sans-serif',
                     }}
                   />
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
