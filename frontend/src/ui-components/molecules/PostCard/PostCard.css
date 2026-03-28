@@ -1,0 +1,89 @@
+.post-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.post-card__project-banner {
+  padding: 0.4rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.post-card__project-label  { color: #fff; font-size: 0.8rem; font-weight: 700; }
+.post-card__project-collab { color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-left: auto; }
+
+.post-card__body { padding: 1rem 1.2rem; }
+
+.post-card__author-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+.post-card__author-info { display: flex; gap: 0.8rem; align-items: center; cursor: pointer; }
+.post-card__author-name  { color: var(--text-primary); font-weight: 600; margin: 0; font-size: 0.95rem; }
+.post-card__author-meta  { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+.post-card__role-badge   { font-size: 0.75rem; font-weight: 500; }
+.post-card__meta-dot     { color: var(--text-muted); font-size: 0.75rem; }
+.post-card__btn-delete   { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0.2rem 0.5rem; }
+
+.post-card__image   { width: 100%; border-radius: 8px; margin-bottom: 0.75rem; max-height: 400px; object-fit: cover; }
+.post-card__content { color: var(--text-primary); line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap; margin-bottom: 0.8rem; }
+
+.post-card__stats           { display: flex; justify-content: space-between; padding: 0.3rem 0; margin-bottom: 0.2rem; }
+.post-card__like-count      { color: var(--text-muted); font-size: 0.8rem; }
+.post-card__comment-count   { color: var(--text-muted); font-size: 0.8rem; cursor: pointer; margin-left: auto; }
+
+.post-card__actions { border-top: 1px solid var(--border); padding-top: 0.3rem; display: flex; gap: 0.2rem; }
+.post-card__action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+.post-card__action-btn:hover           { background: var(--bg-hover); }
+.post-card__action-btn--like           { color: var(--text-secondary); font-weight: 400; }
+.post-card__action-btn--liked          { color: var(--accent); font-weight: 600; }
+.post-card__action-btn--comment        { color: var(--text-secondary); font-weight: 400; }
+.post-card__action-btn--comment-active { color: var(--accent); font-weight: 400; }
+
+.post-card__comments { border-top: 1px solid var(--border); padding: 0.8rem 1.2rem; background: var(--bg-primary); }
+.post-card__comments-loading,
+.post-card__comments-empty  { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.8rem; }
+.post-card__comments-list   { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 0.8rem; }
+
+.post-card__comment        { display: flex; gap: 0.6rem; align-items: flex-start; }
+.post-card__comment-bubble { flex: 1; background: var(--bg-card); border-radius: 0 12px 12px 12px; padding: 0.5rem 0.8rem; }
+.post-card__comment-header { display: flex; justify-content: space-between; align-items: center; }
+.post-card__comment-author { color: var(--text-primary); font-weight: 600; font-size: 0.85rem; }
+.post-card__comment-meta   { display: flex; gap: 0.5rem; align-items: center; }
+.post-card__comment-time   { color: var(--text-muted); font-size: 0.75rem; }
+.post-card__comment-delete { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; padding: 0; }
+.post-card__comment-text   { color: var(--text-secondary); font-size: 0.85rem; margin: 0.2rem 0 0; }
+
+.post-card__comment-compose { display: flex; gap: 0.6rem; align-items: center; }
+.post-card__comment-input-wrap { flex: 1; display: flex; gap: 0.4rem; }
+.post-card__comment-input {
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.post-card__comment-submit          { color: #fff; border: none; border-radius: 20px; padding: 0.4rem 0.8rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.post-card__comment-submit--active  { background: var(--accent); }
+.post-card__comment-submit--disabled { background: var(--border); cursor: default; }
