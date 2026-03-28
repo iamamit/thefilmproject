@@ -5,6 +5,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { roleColors } from '../utils/roleColors';
 import { UserRole } from '../types/enums';
 import { User, Company } from '../types';
+import { Avatar } from '../ui-components/atoms/Avatar/Avatar';
 import './Discover.css';
 
 const ROLES: Array<UserRole | ''> = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
@@ -26,9 +27,10 @@ function Discover() {
   const [activeTab, setActiveTab] = useState<Tab>('people');
   const [filters, setFilters] = useState<Filters>({ role: '', city: '', search: '' });
   const [companySearch, setCompanySearch] = useState('');
-  const token    = localStorage.getItem('token');
-  const username = localStorage.getItem('username');
-  const fullName = localStorage.getItem('fullName');
+  const token       = localStorage.getItem('token');
+  const username    = localStorage.getItem('username');
+  const fullName    = localStorage.getItem('fullName');
+  const profilePhoto = localStorage.getItem('profilePhoto');
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -75,9 +77,7 @@ function Discover() {
             <div className="discover__card discover__card--static">
               <div className="discover__profile-cover" />
               <div className="discover__profile-body">
-                <div className="discover__profile-avatar">
-                  {(fullName || username)?.charAt(0).toUpperCase()}
-                </div>
+                <Avatar photoUrl={profilePhoto} name={fullName || username} size={60} />
                 <p className="discover__profile-name">{fullName}</p>
                 <p className="discover__profile-username">@{username}</p>
                 <div className="discover__profile-divider">
@@ -199,9 +199,7 @@ function Discover() {
                         />
                         <div className="discover__creator-body">
                           <div className="discover__creator-header">
-                            <div className="discover__creator-avatar" style={{ background: primaryColor }}>
-                              {user.fullName?.charAt(0)}
-                            </div>
+                            <Avatar photoUrl={user.profilePhotoUrl} name={user.fullName} size={48} />
                             <div className="discover__creator-meta">
                               <p className="discover__creator-name">{user.fullName}</p>
                               <p className="discover__creator-username">@{user.username}</p>
