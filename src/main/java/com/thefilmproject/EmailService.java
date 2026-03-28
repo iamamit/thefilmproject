@@ -1,5 +1,6 @@
 package com.thefilmproject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,14 +14,15 @@ public class EmailService {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username:noreply@thefilmproject.com}")
     private String fromEmail;
 
-    public EmailService(JavaMailSender mailSender) {
+    public EmailService(@Autowired(required = false) JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
     public void sendPasswordReset(String toEmail, String token) {
+        if (mailSender == null) { System.err.println("Mail not configured — skipping password reset email"); return; }
         try {
             SimpleMailMessage msg = new SimpleMailMessage();
             msg.setFrom(fromEmail);
@@ -37,6 +39,7 @@ public class EmailService {
     }
 
     public void sendVerification(String toEmail, String token) {
+        if (mailSender == null) { System.err.println("Mail not configured — skipping verification email"); return; }
         try {
             SimpleMailMessage msg = new SimpleMailMessage();
             msg.setFrom(fromEmail);
