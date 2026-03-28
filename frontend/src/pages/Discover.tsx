@@ -5,6 +5,7 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { roleColors } from '../utils/roleColors';
 import { UserRole } from '../types/enums';
 import { User, Company } from '../types';
+import { Avatar } from '../ui-components/atoms/Avatar/Avatar';
 import './Discover.css';
 
 const ROLES: Array<UserRole | ''> = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
@@ -199,9 +200,7 @@ function Discover() {
                         />
                         <div className="discover__creator-body">
                           <div className="discover__creator-header">
-                            <div className="discover__creator-avatar" style={{ background: primaryColor }}>
-                              {user.fullName?.charAt(0)}
-                            </div>
+                            <Avatar photoUrl={user.profilePhotoUrl} name={user.fullName} size={48} />
                             <div className="discover__creator-meta">
                               <p className="discover__creator-name">{user.fullName}</p>
                               <p className="discover__creator-username">@{user.username}</p>
