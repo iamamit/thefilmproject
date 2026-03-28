@@ -1,5 +1,6 @@
 package com.thefilmproject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -19,10 +20,15 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final RateLimitFilter rateLimitFilter;
 
-    public SecurityConfig(@Lazy JwtAuthFilter jwtAuthFilter, OAuth2SuccessHandler oAuth2SuccessHandler) {
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    public SecurityConfig(@Lazy JwtAuthFilter jwtAuthFilter, OAuth2SuccessHandler oAuth2SuccessHandler, RateLimitFilter rateLimitFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.rateLimitFilter = rateLimitFilter;
     }
 
     @Bean
@@ -44,7 +50,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/posts/*/comments").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/portfolio/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/companies/**").permitAll()
-                .requestMatchers("/api/notifications/unread-count").permitAll()
                 .requestMatchers("/login/oauth2/**", "/oauth2/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
@@ -56,7 +61,8 @@ public class SecurityConfig {
                     response.getWriter().write("{\"error\":\"Unauthorized\"}");
                 })
             )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -72,7 +78,7 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler)
-                .failureUrl("http://localhost:3000/login?error=oauth")
+                .failureUrl(frontendUrl + "/login?error=oauth")
                 .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
                 .redirectionEndpoint(redirect -> redirect.baseUri("/login/oauth2/code/*"))
             );

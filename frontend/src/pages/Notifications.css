@@ -1,0 +1,158 @@
+/* Notifications.css */
+
+/* ── Page wrapper ── */
+.notifications {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* ── Inner container ── */
+.notifications__container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ── Header row ── */
+.notifications__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.notifications__title {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.notifications__mark-all-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+/* ── Loading ── */
+.notifications__loading {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 3rem;
+}
+
+/* ── Empty state ── */
+.notifications__empty {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 3rem;
+  text-align: center;
+}
+
+.notifications__empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.notifications__empty-text {
+  color: var(--text-muted);
+}
+
+/* ── Notification list ── */
+.notifications__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ── Individual notification item ── */
+.notifications__item {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.notifications__item--read {
+  background: var(--bg-card);
+  border-left: 3px solid transparent;
+}
+
+.notifications__item--unread {
+  background: var(--bg-hover);
+  border-left: 3px solid var(--accent);
+}
+
+.notifications__item:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Sender avatar ── */
+.notifications__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  position: relative;
+}
+
+.notifications__avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notifications__avatar-icon {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 0.8rem;
+  background: var(--bg-card);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Message body ── */
+.notifications__body {
+  flex: 1;
+}
+
+.notifications__message {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.notifications__time {
+  color: var(--text-muted);
+  margin: 0.2rem 0 0;
+  font-size: 0.75rem;
+}
+
+/* ── Unread dot ── */
+.notifications__unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}

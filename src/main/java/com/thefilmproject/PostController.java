@@ -26,6 +26,7 @@ public class PostController {
         post.setContent(request.content());
         if (request.isProject() != null) post.setProject(request.isProject());
         if (request.projectType() != null) post.setProjectType(request.projectType());
+        if (request.imageUrl() != null && !request.imageUrl().isBlank()) post.setImageUrl(request.imageUrl());
         return ResponseEntity.ok(postRepo.save(post));
     }
 
@@ -65,5 +66,5 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
-    record PostRequest(String content, Boolean isProject, String projectType) {}
+    record PostRequest(String content, Boolean isProject, String projectType, String imageUrl) {}
 }

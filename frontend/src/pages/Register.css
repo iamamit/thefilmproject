@@ -1,0 +1,265 @@
+/* Register page styles */
+
+.register__page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Top bar ── */
+.register__topbar {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.register__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.register__logo-icon {
+  font-size: 1.5rem;
+}
+
+.register__logo-name {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.register__topbar-nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.register__topbar-hint {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.register__topbar-link {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ── Main content area ── */
+.register__main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* ── Card ── */
+.register__card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Progress bar ── */
+.register__progress {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.register__progress-step {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+
+.register__progress-step--active {
+  background: var(--accent);
+}
+
+/* ── Card header ── */
+.register__card-title {
+  color: var(--text-primary);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.register__card-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Step 1: account details ── */
+.register__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.register__grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.register__label {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.register__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #c0c0c0;
+  font-size: 0.95rem;
+  outline: none;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.register__input:focus {
+  border-color: var(--accent);
+}
+
+/* ── Buttons ── */
+.register__btn-primary {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.register__btn-row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.register__btn-back {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: 24px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.register__btn-next {
+  flex: 2;
+  padding: 0.8rem;
+  border-radius: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.register__btn-submit {
+  flex: 2;
+  padding: 0.8rem;
+  border-radius: 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.register__btn-submit--loading {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* ── Step 2: role chips ── */
+.register__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Role chip — base style; color overrides applied via inline style (dynamic per-role colour) */
+.register__role-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  /* border, background, color are dynamic — kept as inline styles */
+}
+
+/* ── Step 3: language chips ── */
+.register__languages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Language chip — selected/unselected states are dynamic (accent vs border colour) */
+.register__lang-chip {
+  padding: 0.35rem 0.8rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  /* border, background, color are dynamic — kept as inline styles */
+}
+
+.register__step3-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.register__step3-btn-row {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+/* ── Legal note ── */
+.register__legal {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.register__legal-link {
+  color: var(--accent);
+  text-decoration: none;
+}

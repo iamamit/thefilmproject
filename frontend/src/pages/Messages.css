@@ -1,0 +1,246 @@
+/* Messages.css */
+
+/* ── Page wrapper ── */
+.messages {
+  background: var(--bg-primary);
+  height: calc(100vh - 60px);
+  display: flex;
+}
+
+/* ── Inbox sidebar ── */
+.messages__sidebar {
+  width: 300px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.messages__sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.messages__sidebar-title {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.messages__inbox-loading,
+.messages__inbox-empty {
+  color: var(--text-muted);
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* ── Inbox conversation row ── */
+.messages__inbox-item {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+}
+
+.messages__inbox-item--active {
+  background: var(--bg-hover);
+}
+
+.messages__inbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.messages__inbox-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.messages__inbox-text {
+  overflow: hidden;
+}
+
+.messages__inbox-name {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.messages__inbox-preview {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Chat area ── */
+.messages__chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat header */
+.messages__chat-header {
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.messages__chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.messages__chat-name {
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: bold;
+}
+
+.messages__chat-username {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+/* Message list */
+.messages__conversation {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.messages__conversation-empty {
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Individual message bubble row */
+.messages__bubble-row {
+  display: flex;
+}
+
+.messages__bubble-row--mine {
+  justify-content: flex-end;
+}
+
+.messages__bubble-row--theirs {
+  justify-content: flex-start;
+}
+
+.messages__bubble {
+  max-width: 60%;
+  padding: 0.7rem 1rem;
+}
+
+.messages__bubble--mine {
+  border-radius: 16px 16px 4px 16px;
+  background: var(--accent);
+  border: none;
+}
+
+.messages__bubble--theirs {
+  border-radius: 16px 16px 16px 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.messages__bubble-content {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.messages__bubble-time {
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+.messages__bubble-time--mine {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.messages__bubble-time--theirs {
+  color: var(--text-muted);
+}
+
+/* Input bar */
+.messages__input-bar {
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 0.8rem;
+}
+
+.messages__input {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  border-radius: 24px;
+  border: 1px solid #333;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.messages__send-btn {
+  background: var(--accent);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.messages__send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Empty state (no conversation selected) ── */
+.messages__empty-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.messages__empty-icon {
+  font-size: 3rem;
+}
+
+.messages__empty-text {
+  color: var(--text-muted);
+}
