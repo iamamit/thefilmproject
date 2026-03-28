@@ -10,9 +10,9 @@
 
 | Status | Count |
 |---|---|
-| ✅ Built | 26 |
+| ✅ Built | 28 |
 | 🔄 In progress | 1 |
-| 📋 Remaining | 29 |
+| 📋 Remaining | 27 |
 | **Total** | **56** |
 
 ---
@@ -22,8 +22,8 @@
 
 | # | Feature | Status | Notes |
 |---|---|---|---|
-| 1 | Database migration strategy | 📋 | Replace `ddl-auto=update` with Flyway — push never affects existing data |
-| 2 | Railway deploy | 📋 | Set MAIL_HOST, MAIL_USERNAME, MAIL_PASSWORD, MAIL_PORT, FRONTEND_URL |
+| 1 | Database migration strategy | ✅ | Flyway with baseline-on-migrate — safe for existing Railway DB |
+| 2 | Railway deploy | ✅ | Live at thefilmproject-production.up.railway.app — Google OAuth working |
 | 3 | CI/CD pipeline | 📋 | Auto-run Playwright on push (GitHub Actions) |
 | 4 | Git branch protection | ✅ | main + develop protected on GitHub — direct pushes blocked, must come via PR |
 
