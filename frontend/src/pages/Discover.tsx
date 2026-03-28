@@ -58,18 +58,6 @@ function Discover() {
 
   return (
     <div className="discover">
-      <div className="discover__tabs">
-        {(['people', 'companies'] as Tab[]).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`discover__tab${activeTab === tab ? ' discover__tab--active' : ''}`}
-          >
-            {tab === 'people' ? '👥 People' : '🏢 Companies'}
-          </button>
-        ))}
-      </div>
-
       <div className="discover__layout">
         {/* Left Sidebar */}
         <div className="discover__sidebar-left">
@@ -126,6 +114,17 @@ function Discover() {
 
         {/* Center */}
         <div>
+          <div className="discover__tabs">
+            {(['people', 'companies'] as Tab[]).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`discover__tab${activeTab === tab ? ' discover__tab--active' : ''}`}
+              >
+                {tab === 'people' ? '👥 People' : '🏢 Companies'}
+              </button>
+            ))}
+          </div>
           {activeTab === 'companies' ? (
             <div>
               <div className="discover__card discover__card--static discover__companies-header">

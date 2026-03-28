@@ -9,11 +9,10 @@
 
 /* ── Tab bar ── */
 .discover__tabs {
-  max-width: 1128px;
-  margin: 0 auto 1.5rem;
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
 }
 
 .discover__tab {
@@ -77,7 +76,7 @@
 /* Profile card (logged-in) */
 .discover__profile-cover {
   height: 60px;
-  background: linear-gradient(135deg, #b0bec5, #78909c);
+  background: linear-gradient(135deg, var(--accent), #9b59b6);
 }
 
 .discover__profile-body {
