@@ -27,9 +27,10 @@ function Discover() {
   const [activeTab, setActiveTab] = useState<Tab>('people');
   const [filters, setFilters] = useState<Filters>({ role: '', city: '', search: '' });
   const [companySearch, setCompanySearch] = useState('');
-  const token    = localStorage.getItem('token');
-  const username = localStorage.getItem('username');
-  const fullName = localStorage.getItem('fullName');
+  const token       = localStorage.getItem('token');
+  const username    = localStorage.getItem('username');
+  const fullName    = localStorage.getItem('fullName');
+  const profilePhoto = localStorage.getItem('profilePhoto');
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -76,9 +77,7 @@ function Discover() {
             <div className="discover__card discover__card--static">
               <div className="discover__profile-cover" />
               <div className="discover__profile-body">
-                <div className="discover__profile-avatar">
-                  {(fullName || username)?.charAt(0).toUpperCase()}
-                </div>
+                <Avatar photoUrl={profilePhoto} name={fullName || username} size={60} />
                 <p className="discover__profile-name">{fullName}</p>
                 <p className="discover__profile-username">@{username}</p>
                 <div className="discover__profile-divider">
