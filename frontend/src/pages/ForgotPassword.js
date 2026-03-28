@@ -71,7 +71,7 @@ function ForgotPassword() {
             </p>
 
             {error && (
-              <div style={{ color: '#cc0000', fontSize: '0.85rem', marginBottom: '1rem' }}>
+              <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', padding: '0.7rem 1rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.875rem' }}>
                 {error}
               </div>
             )}

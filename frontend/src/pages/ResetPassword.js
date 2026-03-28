@@ -92,9 +92,9 @@ function ResetPassword() {
           </div>
         ) : !token ? (
           <div>
-            <p style={{ color: '#cc0000', marginBottom: '1rem' }}>
+            <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', padding: '0.7rem 1rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.875rem' }}>
               Invalid reset link. Please request a new one.
-            </p>
+            </div>
             <Link to="/forgot-password" style={{ color: 'var(--accent)', textDecoration: 'none' }}>
               Request new link
             </Link>
@@ -102,7 +102,7 @@ function ResetPassword() {
         ) : (
           <form onSubmit={handleSubmit}>
             {error && (
-              <div style={{ color: '#cc0000', fontSize: '0.85rem', marginBottom: '1rem', padding: '0.75rem', background: 'rgba(204,0,0,0.08)', borderRadius: '6px' }}>
+              <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', padding: '0.7rem 1rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.875rem' }}>
                 {error}
               </div>
             )}
