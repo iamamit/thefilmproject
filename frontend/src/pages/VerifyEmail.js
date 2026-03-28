@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import { usePageMeta } from '../hooks/usePageMeta';
+import './VerifyEmail.css';
 
 function VerifyEmail() {
   usePageMeta('Verify Email');
@@ -27,58 +28,31 @@ function VerifyEmail() {
   }, [token]);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--bg-primary)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: 'DM Sans, sans-serif',
-      padding: '1rem',
-    }}>
-      <div style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
-        borderRadius: '12px',
-        padding: '2rem',
-        width: '100%',
-        maxWidth: '420px',
-        textAlign: 'center',
-      }}>
+    <div className="verify-email">
+      <div className="verify-email__card">
         {status === 'loading' && (
-          <p style={{ color: 'var(--text-secondary)' }}>Verifying your email...</p>
+          <p className="verify-email__loading-text">Verifying your email...</p>
         )}
         {status === 'success' && (
           <>
-            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>✅</span>
-            <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Email verified!</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            <span className="verify-email__icon">✅</span>
+            <h2 className="verify-email__title">Email verified!</h2>
+            <p className="verify-email__body">
               Your account is now active. You can sign in.
             </p>
-            <Link
-              to="/login"
-              style={{
-                background: 'var(--accent)',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '0.75rem 1.5rem',
-                borderRadius: '20px',
-                fontSize: '0.95rem',
-              }}
-            >
+            <Link to="/login" className="verify-email__signin-link">
               Sign In
             </Link>
           </>
         )}
         {status === 'error' && (
           <>
-            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>❌</span>
-            <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Verification failed</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            <span className="verify-email__icon">❌</span>
+            <h2 className="verify-email__title">Verification failed</h2>
+            <p className="verify-email__body">
               {message}
             </p>
-            <Link to="/login" style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+            <Link to="/login" className="verify-email__back-link">
               Back to Sign In
             </Link>
           </>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import './Notifications.css';
 
 const notifIcons = {
   LIKE: '❤️',
@@ -62,78 +63,52 @@ function Notifications() {
   };
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h2 style={{ color: 'var(--text-primary)', margin: 0 }}>🔔 Notifications</h2>
+    <div className="notifications">
+      <div className="notifications__container">
+        <div className="notifications__header">
+          <h2 className="notifications__title">🔔 Notifications</h2>
           {notifications.some(n => !n.isRead) && (
-            <button onClick={markAllRead} style={{
-              background: 'none', border: '1px solid var(--border)',
-              color: 'var(--accent)', borderRadius: '20px',
-              padding: '0.4rem 1rem', cursor: 'pointer', fontSize: '0.85rem'
-            }}>✓ Mark all as read</button>
+            <button onClick={markAllRead} className="notifications__mark-all-btn">
+              ✓ Mark all as read
+            </button>
           )}
         </div>
 
         {loading ? (
-          <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '3rem' }}>Loading...</p>
+          <p className="notifications__loading">Loading...</p>
         ) : notifications.length === 0 ? (
-          <div style={{
-            background: 'var(--bg-card)', borderRadius: 'var(--radius)',
-            border: '1px solid var(--border)', padding: '3rem', textAlign: 'center'
-          }}>
-            <p style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔔</p>
-            <p style={{ color: 'var(--text-muted)' }}>No notifications yet!</p>
+          <div className="notifications__empty">
+            <p className="notifications__empty-icon">🔔</p>
+            <p className="notifications__empty-text">No notifications yet!</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div className="notifications__list">
             {notifications.map(notif => (
-              <div key={notif.id} onClick={() => handleClick(notif)} style={{
-                background: notif.isRead ? 'var(--bg-card)' : 'var(--bg-hover)',
-                borderRadius: 'var(--radius)', border: '1px solid var(--border)',
-                padding: '0.8rem 1rem', cursor: 'pointer', display: 'flex',
-                gap: '0.8rem', alignItems: 'center',
-                borderLeft: notif.isRead ? '3px solid transparent' : '3px solid var(--accent)',
-                transition: 'background 0.2s'
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
-              onMouseLeave={e => e.currentTarget.style.background = notif.isRead ? 'var(--bg-card)' : 'var(--bg-hover)'}
+              <div
+                key={notif.id}
+                onClick={() => handleClick(notif)}
+                className={`notifications__item${notif.isRead ? ' notifications__item--read' : ' notifications__item--unread'}`}
               >
                 {/* Sender avatar */}
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
-                  background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                  justifyContent: 'center', fontSize: '1rem', fontWeight: 'bold', color: '#fff',
-                  position: 'relative'
-                }}>
+                <div className="notifications__avatar">
                   {notif.sender?.profilePhotoUrl
-                    ? <img src={notif.sender.profilePhotoUrl} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                    ? <img src={notif.sender.profilePhotoUrl} alt="" className="notifications__avatar-img" />
                     : notif.sender?.fullName?.charAt(0)}
-                  <span style={{
-                    position: 'absolute', bottom: '-2px', right: '-2px',
-                    fontSize: '0.8rem', background: 'var(--bg-card)',
-                    borderRadius: '50%', width: '20px', height: '20px',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}>{notifIcons[notif.type] || '🔔'}</span>
+                  <span className="notifications__avatar-icon">
+                    {notifIcons[notif.type] || '🔔'}
+                  </span>
                 </div>
 
                 {/* Message */}
-                <div style={{ flex: 1 }}>
-                  <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '0.9rem' }}>
+                <div className="notifications__body">
+                  <p className="notifications__message">
                     <strong>{notif.sender?.fullName}</strong> {notif.message.replace(notif.sender?.fullName + ' ', '')}
                   </p>
-                  <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0 0', fontSize: '0.75rem' }}>
-                    {timeAgo(notif.createdAt)}
-                  </p>
+                  <p className="notifications__time">{timeAgo(notif.createdAt)}</p>
                 </div>
 
                 {/* Unread dot */}
-                {!notif.isRead && (
-                  <div style={{
-                    width: '8px', height: '8px', borderRadius: '50%',
-                    background: 'var(--accent)', flexShrink: 0
-                  }} />
-                )}
+                {!notif.isRead && <div className="notifications__unread-dot" />}
               </div>
             ))}
           </div>

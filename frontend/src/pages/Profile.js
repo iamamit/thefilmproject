@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import Avatar from '../components/AvatarUpload';
 import { usePageMeta } from '../hooks/usePageMeta';
+import './Profile.css';
 
 const roleColors = {
   DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
@@ -34,7 +35,7 @@ function getYouTubeId(url) {
   return match ? match[1] : null;
 }
 
-function PortfolioCard({ item, isOwn, onDelete, card }) {
+function PortfolioCard({ item, isOwn, onDelete }) {
   const [expanded, setExpanded] = useState(false);
   const ytId = getYouTubeId(item.videoUrl);
   const categoryColors = {
@@ -44,40 +45,40 @@ function PortfolioCard({ item, isOwn, onDelete, card }) {
   const catColor = categoryColors[item.category] || '#8899aa';
 
   return (
-    <div style={{ ...card, padding: 0, overflow: 'hidden' }}>
-      {/* Category banner */}
-      <div style={{ background: catColor, padding: '0.35rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '700' }}>{item.category}</span>
+    <div className="profile__card">
+      {/* Category banner — background is data-driven */}
+      <div className="portfolio-card__banner" style={{ background: catColor }}>
+        <span className="portfolio-card__banner-label">{item.category}</span>
         {isOwn && (
-          <button onClick={() => onDelete(item.id)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontSize: '0.8rem' }}>🗑️</button>
+          <button onClick={() => onDelete(item.id)} className="portfolio-card__delete-btn">🗑️</button>
         )}
       </div>
-      <div style={{ padding: '1rem 1.2rem' }}>
-        <h3 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '0.4rem' }}>{item.title}</h3>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: '1.5', marginBottom: '0.8rem' }}>{item.description}</p>
+      <div className="portfolio-card__body">
+        <h3 className="portfolio-card__title">{item.title}</h3>
+        <p className="portfolio-card__description">{item.description}</p>
         {ytId && !expanded && (
-          <div onClick={() => setExpanded(true)} style={{ cursor: 'pointer', position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+          <div onClick={() => setExpanded(true)} className="portfolio-card__thumbnail">
             <img src={`https://img.youtube.com/vi/${ytId}/mqdefault.jpg`} alt={item.title}
-              style={{ width: '100%', display: 'block', borderRadius: '8px' }} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#ff0000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ color: '#fff', fontSize: '1.2rem', marginLeft: '4px' }}>▶</span>
+              className="portfolio-card__thumbnail-img" />
+            <div className="portfolio-card__play-overlay">
+              <div className="portfolio-card__play-btn">
+                <span className="portfolio-card__play-icon">▶</span>
               </div>
             </div>
           </div>
         )}
         {ytId && expanded && (
-          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '8px', overflow: 'hidden' }}>
+          <div className="portfolio-card__video-wrapper">
             <iframe
               src={`https://www.youtube.com/embed/${ytId}?autoplay=1`}
-              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+              className="portfolio-card__iframe"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen title={item.title}
             />
           </div>
         )}
         {item.imageUrl && !item.videoUrl && (
-          <img src={item.imageUrl} alt={item.title} style={{ width: '100%', borderRadius: '8px', marginTop: '0.5rem' }} />
+          <img src={item.imageUrl} alt={item.title} className="portfolio-card__image" />
         )}
       </div>
     </div>
@@ -113,71 +114,61 @@ function ProfilePostCard({ post, idx, postsLen, myUsername, token }) {
     catch {}
   };
 
+  const projectColor = (projectColors[post.projectType] || projectColors.FILM).bg;
+
   return (
-    <div style={{ borderBottom: idx < postsLen - 1 ? '1px solid var(--border)' : 'none', borderLeft: post.project ? `4px solid ${(projectColors[post.projectType] || projectColors.FILM).bg}` : 'none' }}>
+    <div style={{
+      borderBottom: idx < postsLen - 1 ? '1px solid var(--border)' : 'none',
+      borderLeft: post.project ? `4px solid ${projectColor}` : 'none',
+    }}>
       {post.project && (
-        <div style={{ background: `linear-gradient(90deg, ${(projectColors[post.projectType] || projectColors.FILM).bg} 0%, ${(projectColors[post.projectType] || projectColors.FILM).bg}cc 100%)`, padding: '0.3rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: '700' }}>{(projectColors[post.projectType] || projectColors.FILM).label}</span>
-          <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.7rem', marginLeft: 'auto' }}>🔍 Looking for collaborators</span>
+        <div className="post-card__project-banner" style={{ background: `linear-gradient(90deg, ${projectColor} 0%, ${projectColor}cc 100%)` }}>
+          <span className="post-card__project-label">{(projectColors[post.projectType] || projectColors.FILM).label}</span>
+          <span className="post-card__collab-label">🔍 Looking for collaborators</span>
         </div>
       )}
-      <div style={{ padding: '1rem 1.5rem' }}>
-        <p style={{ color: 'var(--text-primary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '0.6rem' }}>{post.content}</p>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>❤️ {post.likedByUserIds?.length || 0}</span>
-          <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>· {timeAgo(post.createdAt)}</span>
-          <button onClick={toggle} style={{
-            background: 'none', border: 'none', color: showComments ? 'var(--accent)' : 'var(--text-muted)',
-            cursor: 'pointer', fontSize: '0.8rem', fontWeight: '500', padding: 0,
-          }}>💬 {showComments ? 'Hide' : 'View Comments'}</button>
+      <div className="post-card__body">
+        <p className="post-card__content">{post.content}</p>
+        <div className="post-card__meta">
+          <span className="post-card__likes">❤️ {post.likedByUserIds?.length || 0}</span>
+          <span className="post-card__time">· {timeAgo(post.createdAt)}</span>
+          <button onClick={toggle} className={`post-card__comment-toggle ${showComments ? 'post-card__comment-toggle--active' : 'post-card__comment-toggle--inactive'}`}>
+            💬 {showComments ? 'Hide' : 'View Comments'}
+          </button>
         </div>
       </div>
       {showComments && (
-        <div style={{ background: 'var(--bg-primary)', padding: '0.8rem 1.5rem', borderTop: '1px solid var(--border)' }}>
-          {loadingC && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading...</p>}
+        <div className="post-card__comments">
+          {loadingC && <p className="post-card__loading">Loading...</p>}
           {comments.map(comment => (
-            <div key={comment.id} style={{ display: 'flex', gap: '0.6rem', marginBottom: '0.8rem' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
-              }}>{comment.author?.fullName?.charAt(0)}</div>
-              <div style={{ flex: 1, background: 'var(--bg-card)', borderRadius: '0 12px 12px 12px', padding: '0.5rem 0.8rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.85rem' }}>{comment.author?.fullName}</span>
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{timeAgo(comment.createdAt)}</span>
+            <div key={comment.id} className="post-card__comment-item">
+              <div className="post-card__comment-avatar">{comment.author?.fullName?.charAt(0)}</div>
+              <div className="post-card__comment-bubble">
+                <div className="post-card__comment-header">
+                  <span className="post-card__comment-author">{comment.author?.fullName}</span>
+                  <div className="post-card__comment-actions">
+                    <span className="post-card__comment-time">{timeAgo(comment.createdAt)}</span>
                     {comment.author?.username === myUsername && (
-                      <button onClick={() => deleteComment(comment.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.75rem' }}>🗑️</button>
+                      <button onClick={() => deleteComment(comment.id)} className="post-card__comment-delete">🗑️</button>
                     )}
                   </div>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0.2rem 0 0' }}>{comment.content}</p>
+                <p className="post-card__comment-text">{comment.content}</p>
               </div>
             </div>
           ))}
           {token && (
-            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', marginTop: '0.5rem' }}>
-              <div style={{
-                width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
-                background: 'var(--accent)', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', color: '#fff'
-              }}>{fullName?.charAt(0)}</div>
+            <div className="post-card__new-comment">
+              <div className="post-card__comment-avatar">{fullName?.charAt(0)}</div>
               <input value={commentText} onChange={e => setCommentText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && submitComment()}
                 placeholder="Add a comment..."
-                style={{
-                  flex: 1, padding: '0.5rem 0.8rem', borderRadius: '20px',
-                  border: '1px solid var(--border)', background: 'var(--bg-card)',
-                  color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
-                }}
+                className="post-card__new-comment-input"
               />
-              <button onClick={submitComment} disabled={!commentText.trim()} style={{
-                background: commentText.trim() ? 'var(--accent)' : 'var(--border)',
-                color: '#fff', border: 'none', borderRadius: '20px',
-                padding: '0.4rem 0.8rem', cursor: commentText.trim() ? 'pointer' : 'default',
-                fontSize: '0.8rem', fontWeight: '600',
-              }}>Post</button>
+              <button onClick={submitComment} disabled={!commentText.trim()}
+                className={`post-card__submit-btn ${commentText.trim() ? 'post-card__submit-btn--active' : 'post-card__submit-btn--disabled'}`}>
+                Post
+              </button>
             </div>
           )}
         </div>
@@ -264,57 +255,53 @@ function Profile() {
     } catch {}
   };
 
-  const card = {
-    background: 'var(--bg-card)', borderRadius: 'var(--radius)',
-    border: '1px solid var(--border)', overflow: 'hidden', marginBottom: '1rem',
-  };
-
-  if (loading) return <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: 'var(--text-secondary)' }}>Loading...</p></div>;
-  if (!user) return <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: 'var(--text-secondary)' }}>User not found</p></div>;
+  if (loading) return (
+    <div className="profile__loading"><p>Loading...</p></div>
+  );
+  if (!user) return (
+    <div className="profile__loading"><p>User not found</p></div>
+  );
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
-      <div style={{ maxWidth: '1128px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', alignItems: 'start' }}>
+    <div className="profile__page">
+      <div className="profile__layout">
         <div>
           {/* Profile Card */}
-          <div style={card}>
-            <div style={{ height: '130px', background: 'linear-gradient(135deg, #b0bec5 0%, #78909c 100%)' }} />
-            <div style={{ padding: '0 1.5rem 1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ marginTop: '-50px' }}>
+          <div className="profile__card">
+            <div className="profile__banner" />
+            <div className="profile__card-body">
+              <div className="profile__header-row">
+                <div className="profile__avatar-wrapper">
                   <Avatar user={user} size={100} editable={isOwn} onUpdated={handlePhotoUpdated} />
                 </div>
-                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.8rem', flexWrap: 'wrap' }}>
+                <div className="profile__actions">
                   {isOwn ? (
-                    <button onClick={() => navigate('/edit-profile')} style={{
-                      background: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)',
-                      padding: '0.4rem 1.2rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '600',
-                    }}>✏️ Edit Profile</button>
+                    <button onClick={() => navigate('/edit-profile')} className="profile__btn profile__btn--edit">✏️ Edit Profile</button>
                   ) : (<>
-                    {!connectionStatus && <button onClick={sendConnection} style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '0.4rem 1.2rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '600' }}>🤝 Connect</button>}
-                    {connectionStatus === 'PENDING_SENT' && <button disabled style={{ background: 'var(--bg-hover)', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '0.4rem 1.2rem', borderRadius: '20px', fontSize: '0.875rem' }}>⏳ Pending</button>}
+                    {!connectionStatus && <button onClick={sendConnection} className="profile__btn profile__btn--connect">🤝 Connect</button>}
+                    {connectionStatus === 'PENDING_SENT' && <button disabled className="profile__btn profile__btn--pending">⏳ Pending</button>}
                     {connectionStatus === 'PENDING_INCOMING' && <>
-                      <button onClick={() => respondConnection(true)} style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '600' }}>✅ Accept</button>
-                      <button onClick={() => respondConnection(false)} style={{ background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border)', padding: '0.4rem 1rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem' }}>❌ Decline</button>
+                      <button onClick={() => respondConnection(true)} className="profile__btn profile__btn--accept">✅ Accept</button>
+                      <button onClick={() => respondConnection(false)} className="profile__btn profile__btn--decline">❌ Decline</button>
                     </>}
-                    {connectionStatus === 'ACCEPTED' && <button onClick={() => navigate(`/messages?user=${user.id}&name=${user.fullName}`)} style={{ background: 'var(--accent)', color: '#fff', border: 'none', padding: '0.4rem 1.2rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem', fontWeight: '600' }}>💬 Message</button>}
+                    {connectionStatus === 'ACCEPTED' && <button onClick={() => navigate(`/messages?user=${user.id}&name=${user.fullName}`)} className="profile__btn profile__btn--message">💬 Message</button>}
                   </>)}
                 </div>
               </div>
-              <h1 style={{ color: 'var(--text-primary)', fontSize: '1.3rem', fontWeight: '700', margin: '0.6rem 0 0.1rem' }}>{user.fullName}</h1>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>@{user.username}</p>
-              {user.bio && <p style={{ color: 'var(--text-primary)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '0.6rem' }}>{user.bio}</p>}
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
-                {user.city && <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>📍 {user.city}{user.country ? `, ${user.country}` : ''}</span>}
-                {user.availableForWork && <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: '500' }}>✅ Available for work</span>}
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>🗓️ {new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
+              <h1 className="profile__name">{user.fullName}</h1>
+              <p className="profile__username">@{user.username}</p>
+              {user.bio && <p className="profile__bio">{user.bio}</p>}
+              <div className="profile__meta">
+                {user.city && <span className="profile__meta-item">📍 {user.city}{user.country ? `, ${user.country}` : ''}</span>}
+                {user.availableForWork && <span className="profile__meta-item--available">✅ Available for work</span>}
+                <span className="profile__meta-item--joined">🗓️ {new Date(user.createdAt).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}</span>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div className="profile__roles">
                 {user.roles?.map(role => (
-                  <span key={role} style={{
-                    background: `${roleColors[role] || '#0a66c2'}18`, color: roleColors[role] || '#0a66c2',
+                  <span key={role} className="profile__role-badge" style={{
+                    background: `${roleColors[role] || '#0a66c2'}18`,
+                    color: roleColors[role] || '#0a66c2',
                     border: `1px solid ${roleColors[role] || '#0a66c2'}44`,
-                    padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '600',
                   }}>{role.replace('_', ' ')}</span>
                 ))}
               </div>
@@ -323,14 +310,14 @@ function Profile() {
 
           {/* Skills */}
           {skills.length > 0 && (
-            <div style={card}>
-              <div style={{ padding: '1.2rem 1.5rem' }}>
-                <h2 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', fontWeight: '700', marginBottom: '1rem' }}>Skills & Tools</h2>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+            <div className="profile__card">
+              <div className="profile__section-header">
+                <h2 className="profile__section-title">Skills & Tools</h2>
+                <div className="profile__skills-list">
                   {skills.map(skill => (
-                    <div key={skill.id} style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: '500' }}>{skill.name}</span>
-                      <span style={{ color: levelColors[skill.level], fontSize: '0.72rem', fontWeight: '600' }}>{skill.level}</span>
+                    <div key={skill.id} className="profile__skill-chip">
+                      <span className="profile__skill-name">{skill.name}</span>
+                      <span className="profile__skill-level" style={{ color: levelColors[skill.level] }}>{skill.level}</span>
                     </div>
                   ))}
                 </div>
@@ -340,12 +327,12 @@ function Profile() {
 
           {/* Languages */}
           {user.languages?.length > 0 && (
-            <div style={card}>
-              <div style={{ padding: '1.2rem 1.5rem' }}>
-                <h2 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', fontWeight: '700', marginBottom: '0.8rem' }}>Languages</h2>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="profile__card">
+              <div className="profile__section-header">
+                <h2 className="profile__section-title--sm-gap">Languages</h2>
+                <div className="profile__languages-list">
                   {user.languages.map(lang => (
-                    <span key={lang} style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', color: 'var(--text-secondary)', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.85rem' }}>🗣️ {lang}</span>
+                    <span key={lang} className="profile__language-chip">🗣️ {lang}</span>
                   ))}
                 </div>
               </div>
@@ -354,43 +341,34 @@ function Profile() {
 
           {/* Portfolio */}
           {(portfolio.length > 0 || isOwn) && (
-            <div style={card}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h2 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', fontWeight: '700' }}>🎬 Portfolio</h2>
+            <div className="profile__card">
+              <div className="profile__card-title-row">
+                <h2 className="profile__section-title--no-margin">🎬 Portfolio</h2>
                 {isOwn && (
-                  <button onClick={() => setShowAddPortfolio(!showAddPortfolio)} style={{
-                    background: showAddPortfolio ? 'var(--bg-hover)' : 'var(--accent)', color: '#fff',
-                    border: 'none', borderRadius: '20px', padding: '0.35rem 1rem',
-                    cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600'
-                  }}>{showAddPortfolio ? '✕ Cancel' : '+ Add Project'}</button>
+                  <button onClick={() => setShowAddPortfolio(!showAddPortfolio)}
+                    className={showAddPortfolio ? 'profile__btn--portfolio-cancel' : 'profile__btn--portfolio-add'}>
+                    {showAddPortfolio ? '✕ Cancel' : '+ Add Project'}
+                  </button>
                 )}
               </div>
               {showAddPortfolio && (
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                  <input placeholder="Project title *" value={newItem.title} onChange={e => setNewItem({...newItem, title: e.target.value})}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }} />
-                  <textarea placeholder="Description" value={newItem.description} onChange={e => setNewItem({...newItem, description: e.target.value})} rows={3}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem', resize: 'vertical', fontFamily: 'inherit' }} />
-                  <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+                <div className="profile__portfolio-form">
+                  <input placeholder="Project title *" value={newItem.title} onChange={e => setNewItem({...newItem, title: e.target.value})} />
+                  <textarea placeholder="Description" value={newItem.description} onChange={e => setNewItem({...newItem, description: e.target.value})} rows={3} />
+                  <select value={newItem.category} onChange={e => setNewItem({...newItem, category: e.target.value})}>
                     {['Short Film','Music Video','Documentary','Ad Film','Reel','Photography','Other'].map(c => <option key={c}>{c}</option>)}
                   </select>
-                  <input placeholder="YouTube URL (optional)" value={newItem.videoUrl} onChange={e => setNewItem({...newItem, videoUrl: e.target.value})}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }} />
-                  <input placeholder="Image URL (optional)" value={newItem.imageUrl} onChange={e => setNewItem({...newItem, imageUrl: e.target.value})}
-                    style={{ padding: '0.5rem 0.8rem', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }} />
-                  <button onClick={addPortfolioItem} style={{
-                    background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: '20px',
-                    padding: '0.5rem 1.5rem', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600', alignSelf: 'flex-end'
-                  }}>Save Project</button>
+                  <input placeholder="YouTube URL (optional)" value={newItem.videoUrl} onChange={e => setNewItem({...newItem, videoUrl: e.target.value})} />
+                  <input placeholder="Image URL (optional)" value={newItem.imageUrl} onChange={e => setNewItem({...newItem, imageUrl: e.target.value})} />
+                  <button onClick={addPortfolioItem} className="profile__btn--save-project">Save Project</button>
                 </div>
               )}
-              <div style={{ padding: '1rem 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+              <div className="profile__portfolio-grid">
                 {portfolio.map(item => (
-                  <PortfolioCard key={item.id} item={item} isOwn={isOwn} onDelete={deletePortfolioItem} card={card} />
+                  <PortfolioCard key={item.id} item={item} isOwn={isOwn} onDelete={deletePortfolioItem} />
                 ))}
                 {portfolio.length === 0 && (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', gridColumn: '1/-1' }}>No portfolio items yet. Add your first project! 🎬</p>
+                  <p className="profile__portfolio-empty">No portfolio items yet. Add your first project! 🎬</p>
                 )}
               </div>
             </div>
@@ -398,9 +376,9 @@ function Profile() {
 
           {/* Activity */}
           {posts.length > 0 && (
-            <div style={card}>
-              <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
-                <h2 style={{ color: 'var(--text-primary)', fontSize: '1.1rem', fontWeight: '700' }}>Activity</h2>
+            <div className="profile__card">
+              <div className="profile__activity-header">
+                <h2 className="profile__section-title--no-margin">Activity</h2>
               </div>
               {posts.map((post, idx) => (
                 <ProfilePostCard key={post.id} post={post} idx={idx} postsLen={posts.length} myUsername={myUsername} token={token} />
@@ -410,25 +388,18 @@ function Profile() {
         </div>
 
         {/* Right Sidebar */}
-        <div style={{ position: 'sticky', top: '72px' }}>
-          <div style={{ ...card, padding: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>👥 People also viewed</p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Discover more creators like {user.fullName.split(' ')[0]}</p>
-            <button onClick={() => navigate('/discover')} style={{
-              marginTop: '0.8rem', width: '100%', background: 'transparent',
-              border: '1px solid var(--accent)', color: 'var(--accent)',
-              borderRadius: '20px', padding: '0.4rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
-            }}>Browse Creators</button>
+        <div className="profile__sidebar">
+          <div className="profile__sidebar-card">
+            <p className="profile__sidebar-heading">👥 People also viewed</p>
+            <p className="profile__sidebar-subtext">Discover more creators like {user.fullName.split(' ')[0]}</p>
+            <button onClick={() => navigate('/discover')} className="profile__btn--browse">Browse Creators</button>
           </div>
           {!isOwn && connectionStatus !== 'ACCEPTED' && token && (
-            <div style={{ ...card, padding: '1rem' }}>
-              <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Connect with {user.fullName.split(' ')[0]}</p>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', marginBottom: '0.8rem' }}>{user.roles?.join(' & ')} · {user.city || 'India'}</p>
+            <div className="profile__sidebar-card">
+              <p className="profile__sidebar-connect-heading">Connect with {user.fullName.split(' ')[0]}</p>
+              <p className="profile__sidebar-connect-meta">{user.roles?.join(' & ')} · {user.city || 'India'}</p>
               {!connectionStatus && (
-                <button onClick={sendConnection} style={{
-                  width: '100%', background: 'var(--accent)', color: '#fff', border: 'none',
-                  borderRadius: '20px', padding: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
-                }}>🤝 Connect</button>
+                <button onClick={sendConnection} className="profile__btn--sidebar-connect">🤝 Connect</button>
               )}
             </div>
           )}

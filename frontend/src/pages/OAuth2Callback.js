@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './OAuth2Callback.css';
 
 function OAuth2Callback() {
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ function OAuth2Callback() {
   }, [navigate]);
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '1rem' }}>🔐 Signing you in with Google...</p>
+    <div className="oauth2-callback">
+      <p className="oauth2-callback__message">🔐 Signing you in with Google...</p>
     </div>
   );
 }

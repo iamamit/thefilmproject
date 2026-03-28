@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import api from '../api';
+import './Messages.css';
 
 function Messages() {
   const [inbox, setInbox] = useState([]);
@@ -72,41 +73,34 @@ function Messages() {
   };
 
   return (
-    <div style={{ background: 'var(--bg-primary)', height: 'calc(100vh - 60px)', display: 'flex' }}>
+    <div className="messages">
 
       {/* Inbox Sidebar */}
-      <div style={{ width: '300px', background: 'var(--bg-card)', borderRight: '1px solid var(--border)', overflowY: 'auto', flexShrink: 0 }}>
-        <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
-          <h2 style={{ color: 'var(--text-primary)', margin: 0, fontSize: '1.2rem' }}>💬 Messages</h2>
+      <div className="messages__sidebar">
+        <div className="messages__sidebar-header">
+          <h2 className="messages__sidebar-title">💬 Messages</h2>
         </div>
 
         {loading ? (
-          <p style={{ color: 'var(--text-muted)', padding: '1rem' }}>Loading...</p>
+          <p className="messages__inbox-loading">Loading...</p>
         ) : inbox.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)', padding: '1rem', fontSize: '0.9rem' }}>
+          <p className="messages__inbox-empty">
             No messages yet. Go to a connection's profile and click Message!
           </p>
         ) : (
           inbox.map(msg => {
             const other = getOtherUser(msg);
             return (
-              <div key={msg.id} onClick={() => setSelectedUser(other)}
-                style={{
-                  padding: '1rem 1.5rem', cursor: 'pointer', borderBottom: '1px solid var(--border)',
-                  background: selectedUser?.id === other.id ? 'var(--bg-hover)' : 'transparent',
-                }}
+              <div
+                key={msg.id}
+                onClick={() => setSelectedUser(other)}
+                className={`messages__inbox-item${selectedUser?.id === other.id ? ' messages__inbox-item--active' : ''}`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                  <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--text-primary)', fontWeight: 'bold', flexShrink: 0
-                  }}>{other.fullName?.charAt(0)}</div>
-                  <div style={{ overflow: 'hidden' }}>
-                    <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '0.9rem', fontWeight: 'bold' }}>{other.fullName}</p>
-                    <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {msg.content}
-                    </p>
+                <div className="messages__inbox-row">
+                  <div className="messages__inbox-avatar">{other.fullName?.charAt(0)}</div>
+                  <div className="messages__inbox-text">
+                    <p className="messages__inbox-name">{other.fullName}</p>
+                    <p className="messages__inbox-preview">{msg.content}</p>
                   </div>
                 </div>
               </div>
@@ -116,37 +110,33 @@ function Messages() {
       </div>
 
       {/* Chat Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="messages__chat">
         {selectedUser ? (
           <>
-            <div style={{ padding: '1rem 1.5rem', background: 'var(--bg-card)', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--text-primary)', fontWeight: 'bold'
-              }}>{selectedUser.fullName?.charAt(0)}</div>
+            <div className="messages__chat-header">
+              <div className="messages__chat-avatar">{selectedUser.fullName?.charAt(0)}</div>
               <div>
-                <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{selectedUser.fullName}</p>
-                {selectedUser.username && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem' }}>@{selectedUser.username}</p>}
+                <p className="messages__chat-name">{selectedUser.fullName}</p>
+                {selectedUser.username && (
+                  <p className="messages__chat-username">@{selectedUser.username}</p>
+                )}
               </div>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            <div className="messages__conversation">
               {conversation.length === 0 && (
-                <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>No messages yet. Say hello! 👋</p>
+                <p className="messages__conversation-empty">No messages yet. Say hello! 👋</p>
               )}
               {conversation.map(msg => {
                 const isMine = msg.sender.username === myUsername;
                 return (
-                  <div key={msg.id} style={{ display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
-                    <div style={{
-                      maxWidth: '60%', padding: '0.7rem 1rem',
-                      borderRadius: isMine ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      background: isMine ? 'var(--accent)' : 'var(--bg-card)',
-                      border: isMine ? 'none' : '1px solid var(--border)'
-                    }}>
-                      <p style={{ color: 'var(--text-primary)', margin: 0, fontSize: '0.95rem' }}>{msg.content}</p>
-                      <p style={{ color: isMine ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)', margin: '0.3rem 0 0', fontSize: '0.75rem', textAlign: 'right' }}>
+                  <div
+                    key={msg.id}
+                    className={`messages__bubble-row${isMine ? ' messages__bubble-row--mine' : ' messages__bubble-row--theirs'}`}
+                  >
+                    <div className={`messages__bubble${isMine ? ' messages__bubble--mine' : ' messages__bubble--theirs'}`}>
+                      <p className="messages__bubble-content">{msg.content}</p>
+                      <p className={`messages__bubble-time${isMine ? ' messages__bubble-time--mine' : ' messages__bubble-time--theirs'}`}>
                         {new Date(msg.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
@@ -156,28 +146,27 @@ function Messages() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div style={{ padding: '1rem 1.5rem', background: 'var(--bg-card)', borderTop: '1px solid var(--border)', display: 'flex', gap: '0.8rem' }}>
+            <div className="messages__input-bar">
               <input
                 value={newMessage}
                 onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && sendMessage()}
                 placeholder="Type a message... (Enter to send)"
-                style={{
-                  flex: 1, padding: '0.7rem 1rem', borderRadius: '24px',
-                  border: '1px solid #333', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.95rem'
-                }}
+                className="messages__input"
               />
-              <button onClick={sendMessage} disabled={sending} style={{
-                background: 'var(--accent)', color: 'var(--text-primary)', border: 'none',
-                borderRadius: '50%', width: '44px', height: '44px',
-                cursor: 'pointer', fontSize: '1.2rem'
-              }}>➤</button>
+              <button
+                onClick={sendMessage}
+                disabled={sending}
+                className="messages__send-btn"
+              >
+                ➤
+              </button>
             </div>
           </>
         ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-            <p style={{ fontSize: '3rem' }}>💬</p>
-            <p style={{ color: 'var(--text-muted)' }}>Select a conversation or go to a profile to start messaging</p>
+          <div className="messages__empty-state">
+            <p className="messages__empty-icon">💬</p>
+            <p className="messages__empty-text">Select a conversation or go to a profile to start messaging</p>
           </div>
         )}
       </div>

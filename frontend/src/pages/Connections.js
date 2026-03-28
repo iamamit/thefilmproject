@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import './Connections.css';
 
 function Connections() {
   const navigate = useNavigate();
@@ -45,80 +46,74 @@ function Connections() {
     return conn.sender.username === myUsername ? conn.receiver : conn.sender;
   };
 
-  const tabStyle = (tab) => ({
-    padding: '0.6rem 1.5rem', borderRadius: '20px', cursor: 'pointer',
-    border: 'none', fontWeight: 'bold', fontSize: '0.9rem',
-    background: activeTab === tab ? 'var(--accent)' : 'var(--bg-hover)',
-    color: 'var(--text-primary)'
-  });
-
-  const cardStyle = {
-    background: 'var(--bg-card)', borderRadius: '12px', padding: '1.2rem',
-    border: '1px solid var(--border)', display: 'flex',
-    alignItems: 'center', gap: '1rem'
-  };
-
-  const avatarStyle = {
-    width: '55px', height: '55px', borderRadius: '50%', background: 'var(--accent)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: '1.3rem', fontWeight: 'bold', color: 'var(--text-primary)', flexShrink: 0
-  };
-
   if (loading) return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--text-muted)' }}>Loading...</p>
+    <div className="connections__loading">
+      <p className="connections__loading-text">Loading...</p>
     </div>
   );
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '2rem' }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-        <h2 style={{ color: 'var(--text-primary)', marginBottom: '0.5rem' }}>My Network</h2>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>Manage your connections</p>
+    <div className="connections">
+      <div className="connections__container">
+        <h2 className="connections__heading">My Network</h2>
+        <p className="connections__subheading">Manage your connections</p>
 
         {/* Tabs */}
-        <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '2rem' }}>
-          <button style={tabStyle('connections')} onClick={() => setActiveTab('connections')}>
+        <div className="connections__tabs">
+          <button
+            className={`connections__tab${activeTab === 'connections' ? ' connections__tab--active' : ''}`}
+            onClick={() => setActiveTab('connections')}
+          >
             🤝 Connected ({connections.length})
           </button>
-          <button style={tabStyle('pending')} onClick={() => setActiveTab('pending')}>
+          <button
+            className={`connections__tab${activeTab === 'pending' ? ' connections__tab--active' : ''}`}
+            onClick={() => setActiveTab('pending')}
+          >
             ⏳ Pending ({pending.length})
           </button>
-          <button style={tabStyle('sent')} onClick={() => setActiveTab('sent')}>
+          <button
+            className={`connections__tab${activeTab === 'sent' ? ' connections__tab--active' : ''}`}
+            onClick={() => setActiveTab('sent')}
+          >
             📤 Sent ({sent.length})
           </button>
         </div>
 
         {/* Connections Tab */}
         {activeTab === 'connections' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="connections__list">
             {connections.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)' }}>No connections yet. Discover creators and connect!</p>
+              <p className="connections__empty">No connections yet. Discover creators and connect!</p>
             ) : connections.map(conn => {
               const other = getOtherUser(conn);
               return (
-                <div key={conn.id} style={cardStyle}>
-                  <div style={avatarStyle}>{other.fullName?.charAt(0)}</div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{other.fullName}</p>
-                    <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{other.username}</p>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
+                <div key={conn.id} className="connections__card">
+                  <div className="connections__avatar">{other.fullName?.charAt(0)}</div>
+                  <div className="connections__info">
+                    <p className="connections__name">{other.fullName}</p>
+                    <p className="connections__username">@{other.username}</p>
+                    <div className="connections__roles">
                       {other.roles?.map(role => (
-                        <span key={role} style={{ background: 'var(--bg-hover)', color: 'var(--accent)', padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem' }}>
+                        <span key={role} className="connections__role-badge">
                           {role.replace('_', ' ')}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button onClick={() => navigate(`/profile/${other.username}`)} style={{
-                      background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none',
-                      padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
-                    }}>View</button>
-                    <button onClick={() => navigate(`/messages?user=${other.id}&name=${other.fullName}`)} style={{
-                      background: 'var(--accent)', color: 'var(--text-primary)', border: 'none',
-                      padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
-                    }}>💬</button>
+                  <div className="connections__actions">
+                    <button
+                      onClick={() => navigate(`/profile/${other.username}`)}
+                      className="connections__btn--view"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => navigate(`/messages?user=${other.id}&name=${other.fullName}`)}
+                      className="connections__btn--message"
+                    >
+                      💬
+                    </button>
                   </div>
                 </div>
               );
@@ -128,26 +123,24 @@ function Connections() {
 
         {/* Pending Tab */}
         {activeTab === 'pending' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="connections__list">
             {pending.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)' }}>No pending requests.</p>
+              <p className="connections__empty">No pending requests.</p>
             ) : pending.map(conn => (
-              <div key={conn.id} style={cardStyle}>
-                <div style={avatarStyle}>{conn.sender.fullName?.charAt(0)}</div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{conn.sender.fullName}</p>
-                  <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.sender.username}</p>
-                  {conn.sender.city && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem' }}>📍 {conn.sender.city}</p>}
+              <div key={conn.id} className="connections__card">
+                <div className="connections__avatar">{conn.sender.fullName?.charAt(0)}</div>
+                <div className="connections__info">
+                  <p className="connections__name">{conn.sender.fullName}</p>
+                  <p className="connections__username">@{conn.sender.username}</p>
+                  {conn.sender.city && <p className="connections__city">📍 {conn.sender.city}</p>}
                 </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <button onClick={() => respond(conn.id, true)} style={{
-                    background: '#4caf50', color: 'var(--text-primary)', border: 'none',
-                    padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
-                  }}>✅ Accept</button>
-                  <button onClick={() => respond(conn.id, false)} style={{
-                    background: 'var(--bg-hover)', color: 'var(--text-primary)', border: 'none',
-                    padding: '0.4rem 0.8rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem'
-                  }}>❌ Decline</button>
+                <div className="connections__actions">
+                  <button onClick={() => respond(conn.id, true)} className="connections__btn--accept">
+                    ✅ Accept
+                  </button>
+                  <button onClick={() => respond(conn.id, false)} className="connections__btn--decline">
+                    ❌ Decline
+                  </button>
                 </div>
               </div>
             ))}
@@ -156,18 +149,18 @@ function Connections() {
 
         {/* Sent Tab */}
         {activeTab === 'sent' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="connections__list">
             {sent.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)' }}>No sent requests.</p>
+              <p className="connections__empty">No sent requests.</p>
             ) : sent.map(conn => (
-              <div key={conn.id} style={cardStyle}>
-                <div style={avatarStyle}>{conn.receiver.fullName?.charAt(0)}</div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ color: 'var(--text-primary)', margin: 0, fontWeight: 'bold' }}>{conn.receiver.fullName}</p>
-                  <p style={{ color: 'var(--text-muted)', margin: '0.2rem 0', fontSize: '0.85rem' }}>@{conn.receiver.username}</p>
-                  {conn.receiver.city && <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.8rem' }}>📍 {conn.receiver.city}</p>}
+              <div key={conn.id} className="connections__card">
+                <div className="connections__avatar">{conn.receiver.fullName?.charAt(0)}</div>
+                <div className="connections__info">
+                  <p className="connections__name">{conn.receiver.fullName}</p>
+                  <p className="connections__username">@{conn.receiver.username}</p>
+                  {conn.receiver.city && <p className="connections__city">📍 {conn.receiver.city}</p>}
                 </div>
-                <span style={{ color: '#f5a623', fontSize: '0.85rem', fontWeight: 'bold' }}>⏳ Pending</span>
+                <span className="connections__pending-label">⏳ Pending</span>
               </div>
             ))}
           </div>

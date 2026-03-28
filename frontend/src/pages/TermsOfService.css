@@ -1,0 +1,48 @@
+/* TermsOfService.css */
+
+.terms {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+}
+
+.terms__content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.terms__back {
+  margin-bottom: 1.5rem;
+}
+
+.terms__back-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.terms__title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.terms__updated {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.terms__section-title {
+  color: var(--text-primary);
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.terms__paragraph {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}

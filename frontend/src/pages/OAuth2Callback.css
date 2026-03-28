@@ -1,0 +1,14 @@
+/* OAuth2Callback.css */
+
+.oauth2-callback {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.oauth2-callback__message {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}

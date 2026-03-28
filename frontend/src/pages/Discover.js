@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { usePageMeta } from '../hooks/usePageMeta';
+import './Discover.css';
 
 const ROLES = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 
@@ -51,112 +52,76 @@ function Discover() {
   useEffect(() => { fetchUsers(); }, []);
   useEffect(() => { fetchCompanies(); }, []);
 
-  const cardStyle = {
-    background: 'var(--bg-card)', borderRadius: 'var(--radius)',
-    border: '1px solid var(--border)', overflow: 'hidden',
-    cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.2s',
-  };
-
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
+    <div className="discover">
       {/* Tabs */}
-      <div style={{ maxWidth: '1128px', margin: '0 auto 1.5rem', display: 'flex', gap: 0, borderBottom: '1px solid var(--border)' }}>
+      <div className="discover__tabs">
         {['people', 'companies'].map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)} style={{
-            background: 'none', border: 'none', padding: '0.7rem 1.5rem',
-            color: activeTab === tab ? 'var(--accent)' : 'var(--text-muted)',
-            borderBottom: activeTab === tab ? '2px solid var(--accent)' : '2px solid transparent',
-            cursor: 'pointer', fontWeight: activeTab === tab ? '600' : '400',
-            textTransform: 'capitalize', fontSize: '0.95rem'
-          }}>{tab === 'people' ? '👥 People' : '🏢 Companies'}</button>
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`discover__tab${activeTab === tab ? ' discover__tab--active' : ''}`}
+          >
+            {tab === 'people' ? '👥 People' : '🏢 Companies'}
+          </button>
         ))}
       </div>
 
-      <div style={{ maxWidth: '1128px', margin: '0 auto', display: 'grid', gridTemplateColumns: '280px 1fr 300px', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="discover__layout">
 
         {/* Left Sidebar - Profile Card */}
-        <div style={{ position: 'sticky', top: '72px' }}>
+        <div className="discover__sidebar-left">
           {token ? (
-            <div style={{ ...cardStyle, cursor: 'default' }}>
+            <div className="discover__card discover__card--static">
               {/* Cover */}
-              <div style={{ height: '60px', background: 'linear-gradient(135deg, #b0bec5, #78909c)' }} />
-              <div style={{ padding: '0 1rem 1rem' }}>
-                <div style={{
-                  width: '56px', height: '56px', borderRadius: '50%',
-                  background: 'var(--accent)', border: '3px solid var(--bg-card)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.4rem', fontWeight: 'bold', color: '#fff',
-                  marginTop: '-28px', marginBottom: '0.5rem'
-                }}>
+              <div className="discover__profile-cover" />
+              <div className="discover__profile-body">
+                <div className="discover__profile-avatar">
                   {(fullName || username)?.charAt(0).toUpperCase()}
                 </div>
-                <p style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '0.95rem' }}>{fullName}</p>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.8rem' }}>@{username}</p>
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.8rem' }}>
-                  <button onClick={() => navigate(`/profile/${username}`)} style={{
-                    width: '100%', background: 'transparent', border: '1px solid var(--accent)',
-                    color: 'var(--accent)', borderRadius: '20px', padding: '0.4rem',
-                    cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600',
-                  }}>View Profile</button>
+                <p className="discover__profile-name">{fullName}</p>
+                <p className="discover__profile-username">@{username}</p>
+                <div className="discover__profile-divider">
+                  <button onClick={() => navigate(`/profile/${username}`)} className="discover__profile-btn">
+                    View Profile
+                  </button>
                 </div>
               </div>
             </div>
           ) : (
-            <div style={{ ...cardStyle, cursor: 'default', padding: '1.5rem', textAlign: 'center' }}>
-              <p style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎬</p>
-              <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.3rem' }}>Join CollabNow</p>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '1rem' }}>Connect with India's best film creators</p>
-              <button onClick={() => navigate('/register')} style={{
-                width: '100%', background: 'var(--accent)', border: 'none',
-                color: '#fff', borderRadius: '20px', padding: '0.5rem',
-                cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem'
-              }}>Join Now</button>
-              <button onClick={() => navigate('/login')} style={{
-                width: '100%', background: 'transparent', border: '1px solid var(--border)',
-                color: 'var(--text-primary)', borderRadius: '20px', padding: '0.5rem',
-                cursor: 'pointer', fontSize: '0.85rem',
-              }}>Sign In</button>
+            <div className="discover__card discover__card--static discover__guest-card">
+              <p className="discover__guest-icon">🎬</p>
+              <p className="discover__guest-title">Join CollabNow</p>
+              <p className="discover__guest-subtitle">Connect with India's best film creators</p>
+              <button onClick={() => navigate('/register')} className="discover__btn--join">Join Now</button>
+              <button onClick={() => navigate('/login')} className="discover__btn--signin">Sign In</button>
             </div>
           )}
 
           {/* Filters */}
-          <div style={{ ...cardStyle, cursor: 'default', padding: '1rem', marginTop: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '1rem', fontSize: '0.9rem' }}>Filter Creators</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div className="discover__card discover__card--static discover__filters">
+            <p className="discover__filters-title">Filter Creators</p>
+            <div className="discover__filters-group">
               <input
                 placeholder="Search by name..."
                 value={filters.search}
                 onChange={e => setFilters({ ...filters, search: e.target.value })}
-                style={{
-                  padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                  color: 'var(--text-primary)', fontSize: '0.85rem', width: '100%',
-                }}
+                className="discover__filters-input"
               />
-              <select value={filters.role}
+              <select
+                value={filters.role}
                 onChange={e => setFilters({ ...filters, role: e.target.value })}
-                style={{
-                  padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                  color: 'var(--text-primary)', fontSize: '0.85rem', width: '100%',
-                }}>
+                className="discover__filters-select"
+              >
                 {ROLES.map(r => <option key={r} value={r}>{r || 'All Roles'}</option>)}
               </select>
               <input
                 placeholder="City..."
                 value={filters.city}
                 onChange={e => setFilters({ ...filters, city: e.target.value })}
-                style={{
-                  padding: '0.5rem 0.8rem', borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                  color: 'var(--text-primary)', fontSize: '0.85rem', width: '100%',
-                }}
+                className="discover__filters-input"
               />
-              <button onClick={fetchUsers} style={{
-                background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: '20px', padding: '0.5rem', cursor: 'pointer',
-                fontSize: '0.85rem', fontWeight: '600',
-              }}>Search</button>
+              <button onClick={fetchUsers} className="discover__btn--search">Search</button>
             </div>
           </div>
         </div>
@@ -165,49 +130,43 @@ function Discover() {
         <div>
           {activeTab === 'companies' ? (
             <div>
-              <div style={{ ...cardStyle, cursor: 'default', padding: '1rem', marginBottom: '1rem' }}>
-                <p style={{ color: 'var(--text-primary)', fontWeight: '600' }}>🏢 Companies & Studios</p>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Find production houses, studios and agencies</p>
+              <div className="discover__card discover__card--static discover__companies-header">
+                <p className="discover__companies-title">🏢 Companies & Studios</p>
+                <p className="discover__companies-subtitle">Find production houses, studios and agencies</p>
                 <input
                   value={companySearch}
                   onChange={e => setCompanySearch(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && fetchCompanies()}
                   placeholder="Search companies..."
-                  style={{
-                    width: '100%', padding: '0.5rem 0.8rem', borderRadius: '8px',
-                    border: '1px solid var(--border)', background: 'var(--bg-primary)',
-                    color: 'var(--text-primary)', fontSize: '0.85rem', outline: 'none',
-                    marginTop: '0.5rem', boxSizing: 'border-box'
-                  }}
+                  className="discover__companies-search"
                 />
               </div>
               {companies.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>No companies found.</div>
+                <div className="discover__empty">No companies found.</div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="discover__feed-list">
                   {companies.map(company => (
-                    <div key={company.id} onClick={() => navigate('/company/' + company.slug)}
-                      style={{ ...cardStyle, cursor: 'pointer', padding: '1rem', display: 'flex', gap: '1rem', alignItems: 'center' }}
-                      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; }}>
-                      <div style={{
-                        width: '56px', height: '56px', borderRadius: '10px', flexShrink: 0,
-                        background: company.logoUrl ? 'transparent' : 'var(--accent)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.3rem', fontWeight: 'bold', color: '#fff', overflow: 'hidden'
-                      }}>
+                    <div
+                      key={company.id}
+                      onClick={() => navigate('/company/' + company.slug)}
+                      className="discover__card discover__company-card"
+                    >
+                      <div
+                        className="discover__company-logo"
+                        style={{ background: company.logoUrl ? 'transparent' : 'var(--accent)' }}
+                      >
                         {company.logoUrl
-                          ? <img src={company.logoUrl} alt={company.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ? <img src={company.logoUrl} alt={company.name} className="discover__company-logo-img" />
                           : company.name && company.name.charAt(0)}
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0 }}>{company.name}</p>
-                          {company.isVerified && <span style={{ color: '#0a66c2', fontSize: '0.8rem' }}>✓</span>}
-                          {company.isOfficial && <span style={{ color: '#ffd700', fontSize: '0.75rem' }}>★ Official</span>}
+                      <div className="discover__company-info">
+                        <div className="discover__company-name-row">
+                          <p className="discover__company-name">{company.name}</p>
+                          {company.isVerified && <span className="discover__company-verified">✓</span>}
+                          {company.isOfficial && <span className="discover__company-official">★ Official</span>}
                         </div>
-                        {company.type && <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.2rem 0 0' }}>{company.type.replace('_', ' ')}</p>}
-                        {company.city && <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.1rem 0 0' }}>📍 {company.city} · 👥 {company.followerCount} followers</p>}
+                        {company.type && <p className="discover__company-type">{company.type.replace('_', ' ')}</p>}
+                        {company.city && <p className="discover__company-city">📍 {company.city} · 👥 {company.followerCount} followers</p>}
                       </div>
                     </div>
                   ))}
@@ -215,94 +174,108 @@ function Discover() {
               )}
             </div>
           ) : (
-        <div>
-          <div style={{ ...cardStyle, cursor: 'default', padding: '1rem', marginBottom: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600' }}>Discover Creators</p>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Find your next collaborator</p>
-          </div>
+            <div>
+              <div className="discover__card discover__card--static discover__feed-header">
+                <p className="discover__feed-title">Discover Creators</p>
+                <p className="discover__feed-subtitle">Find your next collaborator</p>
+              </div>
 
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Loading creators...</div>
-          ) : users.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>No creators found.</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {users.map(user => (
-                <div key={user.id}
-                  style={cardStyle}
-                  onClick={() => navigate(`/profile/${user.username}`)}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'none'; }}
-                >
-                  {/* Cover strip */}
-                  <div style={{ height: '50px', background: `linear-gradient(135deg, ${roleColors[user.roles?.[0]] || 'var(--accent)'}33, ${roleColors[user.roles?.[0]] || '#4a90e2'}22)` }} />
-                  <div style={{ padding: '0 1.2rem 1.2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', marginTop: '-24px', marginBottom: '0.8rem' }}>
-                      <div style={{
-                        width: '52px', height: '52px', borderRadius: '50%',
-                        background: roleColors[user.roles?.[0]] || 'var(--accent)',
-                        border: '3px solid var(--bg-card)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: '1.3rem', fontWeight: 'bold', color: '#fff', flexShrink: 0
-                      }}>{user.fullName?.charAt(0)}</div>
-                      <div style={{ paddingBottom: '0.2rem' }}>
-                        <p style={{ color: 'var(--text-primary)', fontWeight: '600', margin: 0 }}>{user.fullName}</p>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>@{user.username}</p>
+              {loading ? (
+                <div className="discover__empty">Loading creators...</div>
+              ) : users.length === 0 ? (
+                <div className="discover__empty">No creators found.</div>
+              ) : (
+                <div className="discover__feed-list">
+                  {users.map(user => {
+                    const primaryColor = roleColors[user.roles?.[0]] || 'var(--accent)';
+                    const secondaryColor = roleColors[user.roles?.[0]] || '#4a90e2';
+                    return (
+                      <div
+                        key={user.id}
+                        className="discover__card"
+                        onClick={() => navigate(`/profile/${user.username}`)}
+                      >
+                        {/* Cover strip — gradient uses per-user role colour (runtime data) */}
+                        <div
+                          className="discover__creator-cover"
+                          style={{ background: `linear-gradient(135deg, ${primaryColor}33, ${secondaryColor}22)` }}
+                        />
+                        <div className="discover__creator-body">
+                          <div className="discover__creator-header">
+                            {/* Avatar background is per-role runtime colour */}
+                            <div
+                              className="discover__creator-avatar"
+                              style={{ background: primaryColor }}
+                            >
+                              {user.fullName?.charAt(0)}
+                            </div>
+                            <div className="discover__creator-meta">
+                              <p className="discover__creator-name">{user.fullName}</p>
+                              <p className="discover__creator-username">@{user.username}</p>
+                            </div>
+                          </div>
+
+                          {user.bio && <p className="discover__creator-bio">{user.bio}</p>}
+
+                          <div className="discover__creator-roles">
+                            {user.roles?.map(role => (
+                              /* Role badge colours are fully per-role data — kept as inline style */
+                              <span
+                                key={role}
+                                className="discover__role-badge"
+                                style={{
+                                  background: `${roleColors[role]}22`,
+                                  color: roleColors[role],
+                                  border: `1px solid ${roleColors[role]}44`
+                                }}
+                              >
+                                {role.replace('_', ' ')}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="discover__creator-footer">
+                            <div className="discover__creator-info">
+                              {user.city && <span className="discover__creator-city">📍 {user.city}</span>}
+                              {user.availableForWork && <span className="discover__creator-available">✅ Available</span>}
+                            </div>
+                            <button
+                              onClick={e => { e.stopPropagation(); navigate(`/profile/${user.username}`); }}
+                              className="discover__btn--connect"
+                            >
+                              Connect
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-
-                    {user.bio && <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '0.8rem' }}>{user.bio}</p>}
-
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.8rem' }}>
-                      {user.roles?.map(role => (
-                        <span key={role} style={{
-                          background: `${roleColors[role]}22`, color: roleColors[role],
-                          padding: '0.2rem 0.6rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '500',
-                          border: `1px solid ${roleColors[role]}44`
-                        }}>{role.replace('_', ' ')}</span>
-                      ))}
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', gap: '1rem' }}>
-                        {user.city && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>📍 {user.city}</span>}
-                        {user.availableForWork && <span style={{ color: 'var(--success)', fontSize: '0.8rem' }}>✅ Available</span>}
-                      </div>
-                      <button onClick={e => { e.stopPropagation(); navigate(`/profile/${user.username}`); }} style={{
-                        background: 'transparent', border: '1px solid var(--accent)',
-                        color: 'var(--accent)', borderRadius: '20px', padding: '0.3rem 0.9rem',
-                        cursor: 'pointer', fontSize: '0.8rem', fontWeight: '600',
-                      }}>Connect</button>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
 
-          )}
-        </div>
         {/* Right Sidebar */}
-        <div style={{ position: 'sticky', top: '72px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ ...cardStyle, cursor: 'default', padding: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>🎬 About CollabNow</p>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: '1.5' }}>
+        <div className="discover__sidebar-right">
+          <div className="discover__card discover__card--static discover__sidebar-card">
+            <p className="discover__sidebar-title">🎬 About CollabNow</p>
+            <p className="discover__sidebar-text">
               India's professional network for film & content creators. Connect, collaborate, and create.
             </p>
-            <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div className="discover__sidebar-list">
               {['📽️ Directors', '🎵 Musicians', '✂️ Editors', '🎭 Actors', '📸 Cinematographers'].map(item => (
-                <p key={item} style={{ color: 'var(--text-secondary)', fontSize: '0.82rem' }}>{item}</p>
+                <p key={item} className="discover__sidebar-list-item">{item}</p>
               ))}
             </div>
           </div>
 
-          <div style={{ ...cardStyle, cursor: 'default', padding: '1rem' }}>
-            <p style={{ color: 'var(--text-primary)', fontWeight: '600', marginBottom: '0.8rem', fontSize: '0.9rem' }}>🔥 Trending Roles</p>
+          <div className="discover__card discover__card--static discover__sidebar-card">
+            <p className="discover__sidebar-title">🔥 Trending Roles</p>
             {['VFX Artist', 'Content Creator', 'Music Composer', 'Script Writer'].map(role => (
-              <div key={role} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem' }}>
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)' }} />
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{role}</p>
+              <div key={role} className="discover__trending-item">
+                <div className="discover__trending-dot" />
+                <p className="discover__trending-label">{role}</p>
               </div>
             ))}
           </div>

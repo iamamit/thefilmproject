@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
+import './Register.css';
 
 const ROLES = ['DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 const LANGUAGES = ['Hindi', 'English', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Marathi', 'Bengali', 'Punjabi', 'Gujarati'];
@@ -65,195 +66,163 @@ function Register() {
     } finally { setLoading(false); }
   };
 
-  const inputStyle = {
-    width: '100%', padding: '0.75rem 1rem', borderRadius: '6px',
-    border: '1px solid #c0c0c0', fontSize: '0.95rem', outline: 'none',
-    fontFamily: 'inherit', color: '#1a1a1a', background: '#fff',
-  };
-
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column' }}>
-      
+    <div className="register__page">
+
       {/* Top bar */}
-      <div style={{ padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
-          <span style={{ fontSize: '1.5rem' }}>🎬</span>
-          <span style={{ color: 'var(--accent)', fontWeight: '700', fontSize: '1.2rem' }}>CollabNow</span>
+      <div className="register__topbar">
+        <Link to="/" className="register__logo">
+          <span className="register__logo-icon">🎬</span>
+          <span className="register__logo-name">CollabNow</span>
         </Link>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Already on CollabNow?</span>
-          <Link to="/login" style={{
-            border: '1px solid var(--accent)', color: 'var(--accent)',
-            padding: '0.4rem 1.2rem', borderRadius: '20px', fontSize: '0.9rem', fontWeight: '600',
-          }}>Sign in</Link>
+        <div className="register__topbar-nav">
+          <span className="register__topbar-hint">Already on CollabNow?</span>
+          <Link to="/login" className="register__topbar-link">Sign in</Link>
         </div>
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{
-          background: 'var(--bg-card)', borderRadius: '12px',
-          border: '1px solid var(--border)', padding: '2rem',
-          width: '100%', maxWidth: '480px', boxShadow: 'var(--shadow)',
-        }}>
+      <div className="register__main">
+        <div className="register__card">
+
           {/* Progress */}
-          <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '1.5rem' }}>
+          <div className="register__progress">
             {[1, 2, 3].map(s => (
-              <div key={s} style={{
-                flex: 1, height: '4px', borderRadius: '2px',
-                background: s <= step ? 'var(--accent)' : 'var(--border)',
-                transition: 'background 0.3s',
-              }} />
+              <div
+                key={s}
+                className={`register__progress-step${s <= step ? ' register__progress-step--active' : ''}`}
+              />
             ))}
           </div>
 
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1.4rem', fontWeight: '700', marginBottom: '0.3rem' }}>
+          <h2 className="register__card-title">
             {step === 1 ? 'Create your account' : step === 2 ? 'What do you create?' : 'Almost done!'}
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-            {step === 1 ? 'Join India\'s film creator network' : step === 2 ? 'Select your roles (choose all that apply)' : 'A few more details'}
+          <p className="register__card-subtitle">
+            {step === 1 ? "Join India's film creator network" : step === 2 ? 'Select your roles (choose all that apply)' : 'A few more details'}
           </p>
 
           {error && (
-            <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', color: '#cc0000', padding: '0.7rem 1rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.875rem' }}>
-              {error}
-            </div>
+            <div className="auth-error">{error}</div>
           )}
 
           {/* Step 1 */}
           {step === 1 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="register__fields">
+              <div className="register__grid-2">
                 <div>
-                  <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Full Name</label>
+                  <label className="register__label">Full Name</label>
                   <input value={form.fullName} onChange={e => update('fullName', e.target.value)}
-                    placeholder="Raj Sharma" style={inputStyle}
-                    onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                    onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                    placeholder="Raj Sharma" className="register__input" />
                 </div>
                 <div>
-                  <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Username</label>
+                  <label className="register__label">Username</label>
                   <input value={form.username} onChange={e => update('username', e.target.value.toLowerCase())}
-                    placeholder="rajsharma" style={inputStyle}
-                    onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                    onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                    placeholder="rajsharma" className="register__input" />
                 </div>
               </div>
               <div>
-                <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Email</label>
+                <label className="register__label">Email</label>
                 <input type="email" value={form.email} onChange={e => update('email', e.target.value)}
-                  placeholder="raj@example.com" style={inputStyle}
-                  onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                  onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                  placeholder="raj@example.com" className="register__input" />
               </div>
               <div>
-                <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Password</label>
+                <label className="register__label">Password</label>
                 <input type="password" value={form.password} onChange={e => update('password', e.target.value)}
-                  placeholder="Min. 6 characters" style={inputStyle}
-                  onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                  onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                  placeholder="Min. 6 characters" className="register__input" />
               </div>
-              <button onClick={nextStep} style={{
-                width: '100%', padding: '0.8rem', borderRadius: '24px',
-                background: 'var(--accent)', color: '#fff', border: 'none',
-                fontSize: '1rem', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem',
-              }}>Continue →</button>
+              <button onClick={nextStep} className="register__btn-primary">Continue →</button>
             </div>
           )}
 
           {/* Step 2 - Roles */}
           {step === 2 && (
             <div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '1.5rem' }}>
+              <div className="register__roles">
                 {ROLES.map(role => {
                   const selected = form.roles.includes(role);
                   const color = roleColors[role];
                   return (
-                    <button key={role} onClick={() => toggleRole(role)} style={{
-                      padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer',
-                      border: `1px solid ${selected ? color : 'var(--border)'}`,
-                      background: selected ? `${color}18` : 'var(--bg-primary)',
-                      color: selected ? color : 'var(--text-secondary)',
-                      fontSize: '0.875rem', fontWeight: selected ? '600' : '400',
-                      transition: 'all 0.2s',
-                    }}>{role.replace('_', ' ')}</button>
+                    <button
+                      key={role}
+                      onClick={() => toggleRole(role)}
+                      className="register__role-chip"
+                      style={{
+                        border: `1px solid ${selected ? color : 'var(--border)'}`,
+                        background: selected ? `${color}18` : 'var(--bg-primary)',
+                        color: selected ? color : 'var(--text-secondary)',
+                        fontWeight: selected ? '600' : '400',
+                      }}
+                    >
+                      {role.replace('_', ' ')}
+                    </button>
                   );
                 })}
               </div>
-              <div style={{ display: 'flex', gap: '0.8rem' }}>
-                <button onClick={() => setStep(1)} style={{
-                  flex: 1, padding: '0.8rem', borderRadius: '24px',
-                  background: 'transparent', color: 'var(--text-secondary)',
-                  border: '1px solid var(--border)', fontSize: '0.95rem', cursor: 'pointer',
-                }}>← Back</button>
-                <button onClick={nextStep} style={{
-                  flex: 2, padding: '0.8rem', borderRadius: '24px',
-                  background: 'var(--accent)', color: '#fff', border: 'none',
-                  fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer',
-                }}>Continue →</button>
+              <div className="register__btn-row">
+                <button onClick={() => setStep(1)} className="register__btn-back">← Back</button>
+                <button onClick={nextStep} className="register__btn-next">Continue →</button>
               </div>
             </div>
           )}
 
           {/* Step 3 - Location & Languages */}
           {step === 3 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="register__step3-fields">
+              <div className="register__grid-2">
                 <div>
-                  <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>City</label>
+                  <label className="register__label">City</label>
                   <input value={form.city} onChange={e => update('city', e.target.value)}
-                    placeholder="Mumbai" style={inputStyle}
-                    onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                    onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                    placeholder="Mumbai" className="register__input" />
                 </div>
                 <div>
-                  <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Country</label>
+                  <label className="register__label">Country</label>
                   <input value={form.country} onChange={e => update('country', e.target.value)}
-                    placeholder="India" style={inputStyle}
-                    onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                    onBlur={e => e.target.style.border = '1px solid #c0c0c0'} />
+                    placeholder="India" className="register__input" />
                 </div>
               </div>
 
               <div>
-                <label style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: '500', display: 'block', marginBottom: '0.6rem' }}>Languages (optional)</label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <label className="register__label">Languages (optional)</label>
+                <div className="register__languages">
                   {LANGUAGES.map(lang => {
                     const selected = form.languages.includes(lang);
                     return (
-                      <button key={lang} onClick={() => toggleLang(lang)} style={{
-                        padding: '0.35rem 0.8rem', borderRadius: '20px', cursor: 'pointer',
-                        border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
-                        background: selected ? 'var(--accent)' : 'var(--bg-primary)',
-                        color: selected ? '#fff' : 'var(--text-secondary)',
-                        fontSize: '0.8rem', transition: 'all 0.2s',
-                      }}>{lang}</button>
+                      <button
+                        key={lang}
+                        onClick={() => toggleLang(lang)}
+                        className="register__lang-chip"
+                        style={{
+                          border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
+                          background: selected ? 'var(--accent)' : 'var(--bg-primary)',
+                          color: selected ? '#fff' : 'var(--text-secondary)',
+                        }}
+                      >
+                        {lang}
+                      </button>
                     );
                   })}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.8rem', marginTop: '0.5rem' }}>
-                <button onClick={() => setStep(2)} style={{
-                  flex: 1, padding: '0.8rem', borderRadius: '24px',
-                  background: 'transparent', color: 'var(--text-secondary)',
-                  border: '1px solid var(--border)', fontSize: '0.95rem', cursor: 'pointer',
-                }}>← Back</button>
-                <button onClick={handleSubmit} disabled={loading} style={{
-                  flex: 2, padding: '0.8rem', borderRadius: '24px',
-                  background: 'var(--accent)', color: '#fff', border: 'none',
-                  fontSize: '0.95rem', fontWeight: '600', cursor: loading ? 'default' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                }}>{loading ? 'Creating account...' : '🎬 Join CollabNow'}</button>
+              <div className="register__step3-btn-row">
+                <button onClick={() => setStep(2)} className="register__btn-back">← Back</button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={loading}
+                  className={`register__btn-submit${loading ? ' register__btn-submit--loading' : ''}`}
+                >
+                  {loading ? 'Creating account...' : '🎬 Join CollabNow'}
+                </button>
               </div>
             </div>
           )}
 
-          <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '1.5rem' }}>
+          <p className="register__legal">
             By joining, you agree to our{' '}
-            <Link to="/terms" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Terms of Service</Link>
+            <Link to="/terms" className="register__legal-link">Terms of Service</Link>
             {' '}&{' '}
-            <Link to="/privacy" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Privacy Policy</Link>
+            <Link to="/privacy" className="register__legal-link">Privacy Policy</Link>
           </p>
         </div>
       </div>

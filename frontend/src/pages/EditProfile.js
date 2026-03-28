@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Avatar from '../components/AvatarUpload';
+import './EditProfile.css';
 
 const ROLES = ['DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 const LANGUAGES = ['Hindi', 'English', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Marathi', 'Bengali', 'Punjabi', 'Gujarati'];
@@ -94,20 +95,8 @@ function EditProfile() {
     }
   };
 
-
   const handlePhotoUpdated = (newPhoto) => {
     setUser(prev => ({ ...prev, profilePhotoUrl: newPhoto }));
-  };
-
-  const inputStyle = {
-    width: '100%', padding: '0.7rem 1rem', borderRadius: '8px',
-    border: '1px solid var(--border)', background: 'var(--bg-primary)',
-    color: 'var(--text-primary)', fontSize: '0.95rem', outline: 'none', fontFamily: 'inherit',
-  };
-
-  const card = {
-    background: 'var(--bg-card)', borderRadius: 'var(--radius)',
-    border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1rem',
   };
 
   const calcCompletion = () => {
@@ -127,215 +116,176 @@ function EditProfile() {
   const completionPct = calcCompletion();
 
   if (!user) return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
+    <div className="edit-profile__loading">
+      <p>Loading...</p>
     </div>
   );
 
   return (
-    <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', padding: '1.5rem' }}>
-      <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+    <div className="edit-profile__page">
+      <div className="edit-profile__container">
 
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div className="edit-profile__header">
           <div>
-            <h1 style={{ color: 'var(--text-primary)', fontSize: '1.4rem', fontWeight: '700', margin: 0 }}>Edit Profile</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '0.2rem 0 0' }}>Update your creator profile</p>
+            <h1 className="edit-profile__header-title">Edit Profile</h1>
+            <p className="edit-profile__header-subtitle">Update your creator profile</p>
           </div>
-          <div style={{ display: 'flex', gap: '0.8rem' }}>
-            <button onClick={() => navigate(`/profile/${username}`)} style={{
-              background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)',
-              padding: '0.5rem 1.2rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem',
-            }}>Cancel</button>
-            <button onClick={handleSave} disabled={saving} style={{
-              background: saved ? '#2ecc71' : 'var(--accent)', color: '#fff', border: 'none',
-              padding: '0.5rem 1.5rem', borderRadius: '20px', cursor: 'pointer',
-              fontSize: '0.875rem', fontWeight: '600', transition: 'background 0.3s',
-            }}>{saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Changes'}</button>
+          <div className="edit-profile__header-actions">
+            <button onClick={() => navigate(`/profile/${username}`)} className="edit-profile__btn--cancel">Cancel</button>
+            <button onClick={handleSave} disabled={saving}
+              className={`edit-profile__btn--save ${saved ? 'edit-profile__btn--save--saved' : 'edit-profile__btn--save--default'}`}>
+              {saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Changes'}
+            </button>
           </div>
         </div>
 
         {/* Profile Completion Bar */}
-        <div style={{ marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+        <div className="edit-profile__completion">
+          <div className="edit-profile__completion-row">
+            <span className="edit-profile__completion-label">
               Profile {completionPct}% complete
               {completionPct < 100 && ' — complete your profile to get discovered'}
             </span>
-            <span style={{ fontSize: '0.85rem', color: completionPct === 100 ? '#27ae60' : 'var(--accent)', fontWeight: '600' }}>
+            <span className={`edit-profile__completion-pct ${completionPct === 100 ? 'edit-profile__completion-pct--complete' : 'edit-profile__completion-pct--incomplete'}`}>
               {completionPct}%
             </span>
           </div>
-          <div style={{ background: 'var(--border)', borderRadius: '4px', height: '6px' }}>
-            <div style={{
-              width: `${completionPct}%`,
-              height: '100%',
-              borderRadius: '4px',
-              background: completionPct === 100 ? '#27ae60' : 'var(--accent)',
-              transition: 'width 0.4s ease',
-            }} />
+          <div className="edit-profile__completion-track">
+            {/* width is dynamic — kept inline */}
+            <div className={`edit-profile__completion-fill ${completionPct === 100 ? 'edit-profile__completion-fill--complete' : 'edit-profile__completion-fill--incomplete'}`}
+              style={{ width: `${completionPct}%` }} />
           </div>
         </div>
 
         {/* Photo Card */}
-        <div style={card}>
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Profile Photo</h2>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div className="edit-profile__card">
+          <h2 className="edit-profile__card-title">Profile Photo</h2>
+          <div className="edit-profile__photo-row">
             <Avatar user={user} size={80} editable={true} onUpdated={handlePhotoUpdated} />
             <div>
-              <p style={{ color: 'var(--text-primary)', fontWeight: '500', margin: '0 0 0.3rem' }}>Click the photo to update</p>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>JPG, PNG or GIF · Max 2MB</p>
+              <p className="edit-profile__photo-hint-primary">Click the photo to update</p>
+              <p className="edit-profile__photo-hint-secondary">JPG, PNG or GIF · Max 2MB</p>
             </div>
           </div>
         </div>
 
         {/* Basic Info */}
-        <div style={card}>
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '1.2rem' }}>Basic Info</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div className="edit-profile__card">
+          <h2 className="edit-profile__card-title--lg-gap">Basic Info</h2>
+          <div className="edit-profile__fields">
             <div>
-              <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Full Name</label>
+              <label className="edit-profile__label">Full Name</label>
               <input value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })}
-                placeholder="Your full name" style={inputStyle}
-                onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                onBlur={e => e.target.style.border = '1px solid var(--border)'} />
+                placeholder="Your full name" className="edit-profile__input" />
             </div>
             <div>
-              <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Bio / Tagline</label>
+              <label className="edit-profile__label">Bio / Tagline</label>
               <textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })}
                 placeholder="e.g. Independent filmmaker based in Mumbai"
-                rows={3} maxLength={500} style={{ ...inputStyle, resize: 'vertical' }}
-                onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                onBlur={e => e.target.style.border = '1px solid var(--border)'} />
-              <div style={{
-                textAlign: 'right',
-                fontSize: '0.75rem',
-                color: (form.bio?.length || 0) > 450 ? '#cc0000' : 'var(--text-muted)',
-                marginTop: '0.25rem',
-              }}>
+                rows={3} maxLength={500} className="edit-profile__textarea" />
+              <div className={`edit-profile__char-count ${(form.bio?.length || 0) > 450 ? 'edit-profile__char-count--warning' : 'edit-profile__char-count--normal'}`}>
                 {form.bio?.length || 0}/500
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="edit-profile__city-country">
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>City</label>
+                <label className="edit-profile__label">City</label>
                 <input value={form.city} onChange={e => setForm({ ...form, city: e.target.value })}
-                  placeholder="Mumbai" style={inputStyle}
-                  onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                  onBlur={e => e.target.style.border = '1px solid var(--border)'} />
+                  placeholder="Mumbai" className="edit-profile__input" />
               </div>
               <div>
-                <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Country</label>
+                <label className="edit-profile__label">Country</label>
                 <input value={form.country} onChange={e => setForm({ ...form, country: e.target.value })}
-                  placeholder="India" style={inputStyle}
-                  onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-                  onBlur={e => e.target.style.border = '1px solid var(--border)'} />
+                  placeholder="India" className="edit-profile__input" />
               </div>
             </div>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+            <label className="edit-profile__available-label">
               <input type="checkbox" checked={form.availableForWork}
                 onChange={e => setForm({ ...form, availableForWork: e.target.checked })}
-                style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
-              <span style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>Available for work</span>
+                className="edit-profile__available-checkbox" />
+              <span className="edit-profile__available-text">Available for work</span>
             </label>
           </div>
         </div>
 
         {/* Roles */}
-        <div style={card}>
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Your Roles</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+        <div className="edit-profile__card">
+          <h2 className="edit-profile__card-title">Your Roles</h2>
+          <div className="edit-profile__role-list">
             {ROLES.map(role => {
               const selected = form.roles.includes(role);
               const color = roleColors[role];
               return (
-                <button key={role} onClick={() => toggleRole(role)} style={{
-                  padding: '0.4rem 1rem', borderRadius: '20px', cursor: 'pointer',
-                  border: `1px solid ${selected ? color : 'var(--border)'}`,
-                  background: selected ? `${color}18` : 'transparent',
-                  color: selected ? color : 'var(--text-secondary)',
-                  fontSize: '0.85rem', fontWeight: selected ? '600' : '400',
-                  transition: 'all 0.2s',
-                }}>{role.replace('_', ' ')}</button>
+                <button key={role} onClick={() => toggleRole(role)}
+                  className={`edit-profile__role-btn ${selected ? 'edit-profile__role-btn--selected' : 'edit-profile__role-btn--unselected'}`}
+                  style={selected ? {
+                    border: `1px solid ${color}`,
+                    background: `${color}18`,
+                    color: color,
+                  } : undefined}>
+                  {role.replace('_', ' ')}
+                </button>
               );
             })}
           </div>
         </div>
 
         {/* Languages */}
-        <div style={card}>
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Languages</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+        <div className="edit-profile__card">
+          <h2 className="edit-profile__card-title">Languages</h2>
+          <div className="edit-profile__lang-list">
             {LANGUAGES.map(lang => {
               const selected = form.languages.includes(lang);
               return (
-                <button key={lang} onClick={() => toggleLang(lang)} style={{
-                  padding: '0.4rem 1rem', borderRadius: '20px', cursor: 'pointer',
-                  border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
-                  background: selected ? 'var(--accent)' : 'transparent',
-                  color: selected ? '#fff' : 'var(--text-secondary)',
-                  fontSize: '0.85rem', transition: 'all 0.2s',
-                }}>{lang}</button>
+                <button key={lang} onClick={() => toggleLang(lang)}
+                  className={`edit-profile__lang-btn ${selected ? 'edit-profile__lang-btn--selected' : 'edit-profile__lang-btn--unselected'}`}>
+                  {lang}
+                </button>
               );
             })}
           </div>
         </div>
 
         {/* Skills */}
-        <div style={card}>
-          <h2 style={{ color: 'var(--text-primary)', fontSize: '1rem', fontWeight: '700', marginBottom: '1rem' }}>Skills & Tools</h2>
+        <div className="edit-profile__card">
+          <h2 className="edit-profile__card-title">Skills & Tools</h2>
 
           {/* Existing skills */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '1rem' }}>
+          <div className="edit-profile__skill-chips">
             {skills.map(skill => (
-              <div key={skill.id} style={{
-                display: 'flex', alignItems: 'center', gap: '0.4rem',
-                background: 'var(--bg-primary)', border: '1px solid var(--border)',
-                borderRadius: '8px', padding: '0.3rem 0.6rem 0.3rem 0.8rem',
-              }}>
-                <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>{skill.name}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>{skill.level}</span>
-                <button onClick={() => deleteSkill(skill.id)} style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  color: 'var(--text-muted)', fontSize: '0.75rem', padding: '0 2px',
-                }}>✕</button>
+              <div key={skill.id} className="edit-profile__skill-chip">
+                <span className="edit-profile__skill-name">{skill.name}</span>
+                <span className="edit-profile__skill-level">{skill.level}</span>
+                <button onClick={() => deleteSkill(skill.id)} className="edit-profile__skill-remove">✕</button>
               </div>
             ))}
-            {skills.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No skills added yet</p>}
+            {skills.length === 0 && <p className="edit-profile__skill-empty">No skills added yet</p>}
           </div>
 
           {/* Add skill */}
-          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+          <div className="edit-profile__skill-add-row">
             <input value={newSkill.name} onChange={e => setNewSkill({ ...newSkill, name: e.target.value })}
               onKeyDown={e => e.key === 'Enter' && addSkill()}
-              placeholder="e.g. Final Cut Pro" style={{ ...inputStyle, flex: 2, minWidth: '140px' }}
-              onFocus={e => e.target.style.border = '1px solid var(--accent)'}
-              onBlur={e => e.target.style.border = '1px solid var(--border)'} />
+              placeholder="e.g. Final Cut Pro"
+              className={`edit-profile__input edit-profile__skill-input`} />
             <select value={newSkill.level} onChange={e => setNewSkill({ ...newSkill, level: e.target.value })}
-              style={{ ...inputStyle, flex: 1, minWidth: '110px' }}>
+              className={`edit-profile__input edit-profile__skill-level-select`}>
               <option value="BEGINNER">Beginner</option>
               <option value="INTERMEDIATE">Intermediate</option>
               <option value="EXPERT">Expert</option>
             </select>
-            <button onClick={addSkill} style={{
-              background: 'var(--accent)', color: '#fff', border: 'none',
-              padding: '0.7rem 1.2rem', borderRadius: '8px', cursor: 'pointer',
-              fontSize: '0.875rem', fontWeight: '600', whiteSpace: 'nowrap',
-            }}>+ Add</button>
+            <button onClick={addSkill} className="edit-profile__btn--add-skill">+ Add</button>
           </div>
         </div>
 
         {/* Bottom Save */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem', paddingBottom: '2rem' }}>
-          <button onClick={() => navigate(`/profile/${username}`)} style={{
-            background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)',
-            padding: '0.6rem 1.5rem', borderRadius: '20px', cursor: 'pointer', fontSize: '0.875rem',
-          }}>Cancel</button>
-          <button onClick={handleSave} disabled={saving} style={{
-            background: saved ? '#2ecc71' : 'var(--accent)', color: '#fff', border: 'none',
-            padding: '0.6rem 1.8rem', borderRadius: '20px', cursor: 'pointer',
-            fontSize: '0.875rem', fontWeight: '600',
-          }}>{saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Changes'}</button>
+        <div className="edit-profile__footer">
+          <button onClick={() => navigate(`/profile/${username}`)} className="edit-profile__btn--cancel-footer">Cancel</button>
+          <button onClick={handleSave} disabled={saving}
+            className={`edit-profile__btn--save-footer ${saved ? 'edit-profile__btn--save-footer--saved' : 'edit-profile__btn--save-footer--default'}`}>
+            {saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Changes'}
+          </button>
         </div>
       </div>
     </div>

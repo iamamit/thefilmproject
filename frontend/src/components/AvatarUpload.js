@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import api from '../api';
+import './AvatarUpload.css';
 
 function Avatar({ user, size = 60, editable = false, onUpdated }) {
   const [uploading, setUploading] = useState(false);
@@ -36,7 +37,8 @@ function Avatar({ user, size = 60, editable = false, onUpdated }) {
   const bgColor = roleColors[user?.roles?.[0]] || '#0a66c2';
 
   return (
-    <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}
+    <div className="avatar__wrapper"
+      style={{ width: size, height: size }}
       onMouseEnter={() => canEdit && setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={() => canEdit && fileRef.current?.click()}
@@ -44,30 +46,36 @@ function Avatar({ user, size = 60, editable = false, onUpdated }) {
     >
       {user?.profilePhotoUrl ? (
         <img src={user.profilePhotoUrl} alt={user.fullName}
-          style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--bg-card)' }} />
+          className="avatar__img"
+          style={{ width: size, height: size }} />
       ) : (
-        <div style={{
-          width: size, height: size, borderRadius: '50%', background: bgColor,
-          border: '4px solid var(--bg-card)', display: 'flex', alignItems: 'center',
-          justifyContent: 'center', fontSize: size * 0.35, fontWeight: 'bold', color: '#fff',
-        }}>{firstLetter}</div>
+        /* background is data-driven (role color), kept inline */
+        <div className="avatar__initials"
+          style={{
+            width: size,
+            height: size,
+            background: bgColor,
+            fontSize: size * 0.35,
+          }}>
+          {firstLetter}
+        </div>
       )}
 
       {/* Hover overlay */}
       {canEdit && (hover || uploading) && (
-        <div style={{
-          position: 'absolute', inset: 0, borderRadius: '50%',
-          background: 'rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-        }}>
+        <div className="avatar__overlay">
           {uploading
-            ? <span style={{ color: '#fff', fontSize: '0.65rem' }}>...</span>
-            : <><span style={{ fontSize: size * 0.25 }}>📷</span><span style={{ color: '#fff', fontSize: '0.6rem', marginTop: '2px' }}>Edit</span></>
+            ? <span className="avatar__overlay-uploading">...</span>
+            : <>
+                {/* font-size is dynamic (size * 0.25), kept inline */}
+                <span style={{ fontSize: size * 0.25 }}>📷</span>
+                <span className="avatar__overlay-edit-label">Edit</span>
+              </>
           }
         </div>
       )}
 
-      {canEdit && <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />}
+      {canEdit && <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="avatar__file-input" />}
     </div>
   );
 }
