@@ -1,0 +1,680 @@
+/* Profile page styles */
+
+/* ── Page shell ── */
+.profile__page {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.profile__layout {
+  max-width: 1128px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ── Loading / empty states ── */
+.profile__loading {
+  background: var(--bg-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile__loading p {
+  color: var(--text-secondary);
+}
+
+/* ── Generic card ── */
+.profile__card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+/* ── Profile header card ── */
+.profile__banner {
+  height: 130px;
+  background: linear-gradient(135deg, #b0bec5 0%, #78909c 100%);
+}
+
+.profile__card-body {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.profile__header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.profile__avatar-wrapper {
+  margin-top: -50px;
+}
+
+.profile__actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+/* Action buttons */
+.profile__btn {
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+}
+
+.profile__btn--edit {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.profile__btn--connect {
+  background: var(--accent);
+  color: #fff;
+}
+
+.profile__btn--pending {
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  font-weight: 400;
+  cursor: default;
+}
+
+.profile__btn--accept {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.4rem 1rem;
+}
+
+.profile__btn--decline {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.4rem 1rem;
+  font-weight: 400;
+}
+
+.profile__btn--message {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Name / bio / meta */
+.profile__name {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0.6rem 0 0.1rem;
+}
+
+.profile__username {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile__bio {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+
+.profile__meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.profile__meta-item {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.profile__meta-item--available {
+  color: #2ecc71;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.profile__meta-item--joined {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Role badges — colors are data-driven, kept inline for bg/color/border */
+.profile__roles {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profile__role-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ── Skills card ── */
+.profile__section-header {
+  padding: 1.2rem 1.5rem;
+}
+
+.profile__section-title {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.profile__section-title--no-margin {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.profile__section-title--sm-gap {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.profile__skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.profile__skill-chip {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.profile__skill-name {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* skill level color is data-driven — kept inline */
+.profile__skill-level {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* ── Languages card ── */
+.profile__languages-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profile__language-chip {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+/* ── Portfolio card ── */
+.profile__card-title-row {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile__btn--portfolio-add {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.profile__btn--portfolio-cancel {
+  background: var(--bg-hover);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.35rem 1rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.profile__portfolio-form {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.profile__portfolio-form input,
+.profile__portfolio-form textarea,
+.profile__portfolio-form select {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.profile__portfolio-form textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.profile__btn--save-project {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  align-self: flex-end;
+}
+
+.profile__portfolio-grid {
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.profile__portfolio-empty {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  grid-column: 1 / -1;
+}
+
+/* ── Activity card ── */
+.profile__activity-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Right sidebar ── */
+.profile__sidebar {
+  position: sticky;
+  top: 72px;
+}
+
+.profile__sidebar-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.profile__sidebar-heading {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.profile__sidebar-subtext {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.profile__btn--browse {
+  margin-top: 0.8rem;
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.profile__sidebar-connect-heading {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.profile__sidebar-connect-meta {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  margin-bottom: 0.8rem;
+}
+
+.profile__btn--sidebar-connect {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════
+   PortfolioCard sub-component
+   ══════════════════════════════════════════ */
+
+/* category banner — bg is data-driven, kept inline */
+.portfolio-card__banner {
+  padding: 0.35rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.portfolio-card__banner-label {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.portfolio-card__delete-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.portfolio-card__body {
+  padding: 1rem 1.2rem;
+}
+
+.portfolio-card__title {
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.portfolio-card__description {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.portfolio-card__thumbnail {
+  cursor: pointer;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.portfolio-card__thumbnail-img {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+.portfolio-card__play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.portfolio-card__play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #ff0000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portfolio-card__play-icon {
+  color: #fff;
+  font-size: 1.2rem;
+  margin-left: 4px;
+}
+
+.portfolio-card__video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.portfolio-card__iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.portfolio-card__image {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* ══════════════════════════════════════════
+   ProfilePostCard sub-component
+   ══════════════════════════════════════════ */
+
+/* post border-left color and border-bottom are data-driven → kept inline */
+.post-card__project-banner {
+  padding: 0.3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.post-card__project-label {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.post-card__collab-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.7rem;
+  margin-left: auto;
+}
+
+.post-card__body {
+  padding: 1rem 1.5rem;
+}
+
+.post-card__content {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+
+.post-card__meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.post-card__likes {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.post-card__time {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.post-card__comment-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0;
+}
+
+.post-card__comment-toggle--active {
+  color: var(--accent);
+}
+
+.post-card__comment-toggle--inactive {
+  color: var(--text-muted);
+}
+
+/* Comments section */
+.post-card__comments {
+  background: var(--bg-primary);
+  padding: 0.8rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.post-card__loading {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.post-card__comment-item {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.post-card__comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.post-card__comment-bubble {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: 0 12px 12px 12px;
+  padding: 0.5rem 0.8rem;
+}
+
+.post-card__comment-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-card__comment-author {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.post-card__comment-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.post-card__comment-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.post-card__comment-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.post-card__comment-text {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0.2rem 0 0;
+}
+
+/* New comment form */
+.post-card__new-comment {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.post-card__new-comment-input {
+  flex: 1;
+  padding: 0.5rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.post-card__submit-btn {
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.post-card__submit-btn--active {
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.post-card__submit-btn--disabled {
+  background: var(--border);
+  cursor: default;
+}

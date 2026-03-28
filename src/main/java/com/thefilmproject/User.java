@@ -45,6 +45,8 @@ public class User {
 
     private boolean availableForWork = true;
 
+    private boolean emailVerified = false;
+
     @Column(updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -62,6 +64,7 @@ public class User {
     public List<CreatorRole> getRoles() { return roles; }
     public List<String> getLanguages() { return languages; }
     public boolean isAvailableForWork() { return availableForWork; }
+    public boolean isEmailVerified() { return emailVerified; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setId(Long id) { this.id = id; }
@@ -76,6 +79,7 @@ public class User {
     public void setRoles(List<CreatorRole> roles) { this.roles = roles; }
     public void setLanguages(List<String> languages) { this.languages = languages; }
     public void setAvailableForWork(boolean availableForWork) { this.availableForWork = availableForWork; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
 
     public static Builder builder() { return new Builder(); }
 

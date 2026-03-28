@@ -1,0 +1,30 @@
+.avatar__img {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar__initials {
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.avatar__overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar__file-input {
+  display: none;
+}

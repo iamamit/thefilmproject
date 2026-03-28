@@ -1,0 +1,19 @@
+.msg-bubble-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+.msg-bubble-row--mine  { justify-content: flex-end; }
+.msg-bubble-row--theirs { justify-content: flex-start; }
+
+.msg-bubble {
+  max-width: 65%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 16px;
+}
+.msg-bubble--mine   { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg-bubble--theirs { background: var(--bg-hover); color: var(--text-primary); border-bottom-left-radius: 4px; }
+
+.msg-bubble__content { font-size: 0.9rem; line-height: 1.45; }
+.msg-bubble__time { font-size: 0.72rem; margin-top: 0.2rem; opacity: 0.7; }
+.msg-bubble__time--mine   { text-align: right; }
+.msg-bubble__time--theirs { text-align: left; }

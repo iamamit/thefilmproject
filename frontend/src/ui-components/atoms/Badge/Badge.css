@@ -1,0 +1,11 @@
+.badge {
+  display: inline-block;
+  border-radius: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.badge--sm { padding: 0.15rem 0.55rem; font-size: 0.72rem; }
+.badge--md { padding: 0.25rem 0.7rem; font-size: 0.8rem; }

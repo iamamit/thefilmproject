@@ -1,0 +1,19 @@
+.conn-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.conn-card__info { flex: 1; min-width: 0; }
+.conn-card__name { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+.conn-card__username { color: var(--text-secondary); font-size: 0.82rem; }
+.conn-card__city { color: var(--text-muted); font-size: 0.8rem; margin-top: 0.15rem; }
+.conn-card__roles { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+
+.conn-card__actions { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-end; }
+.conn-card__label { font-size: 0.8rem; color: var(--text-secondary); }
