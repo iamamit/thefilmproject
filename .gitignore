@@ -1,2 +1,5 @@
 target/
 application.properties.save
+
+# Secrets — never commit
+src/main/resources/application.properties
