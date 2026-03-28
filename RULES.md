@@ -89,6 +89,7 @@ A feature or fix is only done when:
   - `test: add playwright tests for notifications`
 - One logical change per commit
 - Don't commit commented-out code or debug logs
+- **Never add `Co-Authored-By` or any AI attribution lines to commit messages** — all commits must appear under the developer's name only
 
 ---
 
