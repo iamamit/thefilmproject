@@ -10,7 +10,7 @@ import EditProfile from './pages/EditProfile';
 import Messages from './pages/Messages';
 import Connections from './pages/Connections';
 import Notifications from './pages/Notifications';
-import Navbar from './components/Navbar';
+import { Navbar } from './ui-components/organisms/Navbar/Navbar';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import CheckEmail from './pages/CheckEmail';
