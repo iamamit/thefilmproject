@@ -151,18 +151,27 @@ npm start
 ```bash
 cd frontend
 
-# All integration tests (22 tests)
-npx playwright test tests/integration.spec.js
-
-# Pre-launch feature tests (18 tests)
-npx playwright test tests/pre-launch.spec.js
-
-# All tests
+# Full suite (all tests)
 npx playwright test
+
+# Individual suites
+npx playwright test tests/integration.spec.js     # Core user journeys (22 tests)
+npx playwright test tests/pre-launch.spec.js      # Pre-launch features (31 tests)
+npx playwright test tests/profile-photo.spec.js   # Profile photo upload & display (13 tests)
+npx playwright test tests/login-error.spec.js     # Login error handling (3 tests)
 
 # With UI
 npx playwright test --ui
 ```
+
+### Test suites
+
+| Suite | Tests | What it covers |
+|---|---|---|
+| `integration.spec.js` | 22 | Full user journey: register, login, post, like, comment, connect, notify, company |
+| `pre-launch.spec.js` | 31 | 404 page, ToS/Privacy, forgot password, email verify, SEO titles, char counters, image upload |
+| `profile-photo.spec.js` | 13 | Photo upload API, photo display in feed, left panel, compose box, comments |
+| `login-error.spec.js` | 3 | Wrong password, unknown email, empty fields |
 
 ---
 

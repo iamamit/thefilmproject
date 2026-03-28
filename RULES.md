@@ -46,6 +46,17 @@ npx playwright test
 
 All tests must pass before merging into `develop`.
 
+### Test suites
+
+| File | Purpose |
+|---|---|
+| `integration.spec.js` | Core user journeys (register → post → connect → notify). Run after any change to existing features. |
+| `pre-launch.spec.js` | Pre-launch feature checks (404, ToS, forgot password, email verify, SEO, char counters, image upload). |
+| `profile-photo.spec.js` | Profile photo upload and display across the feed. |
+| `login-error.spec.js` | Login error handling edge cases. |
+
+When adding a new feature, create a new `<feature-name>.spec.js` file rather than adding to an existing one.
+
 ---
 
 ## Definition of Done
