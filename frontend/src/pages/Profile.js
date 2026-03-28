@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import Avatar from '../components/AvatarUpload';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const roleColors = {
   DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
@@ -189,6 +190,7 @@ function Profile() {
   const { username } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  usePageMeta(user ? `${user.fullName}'s Profile` : 'Profile', user ? `${user.fullName} — ${user.roles?.[0]?.replace('_', ' ')} on TheFilmProject` : null);
   const [skills, setSkills] = useState([]);
   const [posts, setPosts] = useState([]);
   const [portfolio, setPortfolio] = useState([]);
