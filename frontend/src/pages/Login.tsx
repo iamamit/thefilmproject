@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
 import { usePageMeta } from '../hooks/usePageMeta';
 import './Login.css';
 
@@ -19,14 +19,12 @@ function Login() {
       const parts = token.split('.');
       if (parts.length < 2) { localStorage.removeItem('token'); return; }
       const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-      // If token has exp claim, ensure it's in the future (exp is seconds)
       if (!payload.exp || payload.exp * 1000 > Date.now()) {
         navigate('/home');
       } else {
-        // expired token: clear and stay on login
         localStorage.removeItem('token');
       }
-    } catch (e) {
+    } catch {
       localStorage.removeItem('token');
     }
   }, [navigate]);
@@ -43,15 +41,13 @@ function Login() {
       if (res.data.profilePhotoUrl) localStorage.setItem('profilePhoto', res.data.profilePhotoUrl);
       else localStorage.removeItem('profilePhoto');
       navigate('/home');
-    } catch (err) {
+    } catch {
       setError('Invalid email or password');
     } finally { setLoading(false); }
   };
 
   return (
     <div className="login__page">
-
-      {/* Top bar */}
       <div className="login__topbar">
         <Link to="/" className="login__logo">
           <span className="login__logo-icon">🎬</span>
@@ -63,10 +59,7 @@ function Login() {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="login__main">
-
-        {/* Left - Branding */}
         <div className="login__branding">
           <div>
             <h1 className="login__headline">
@@ -81,8 +74,8 @@ function Login() {
           <div className="login__features">
             {[
               { icon: '🎬', title: 'Find collaborators', desc: 'Connect with 100+ creators across India' },
-              { icon: '💬', title: 'Message directly', desc: 'Chat with your connections instantly' },
-              { icon: '📢', title: 'Share your work', desc: 'Post updates, projects and opportunities' },
+              { icon: '💬', title: 'Message directly',   desc: 'Chat with your connections instantly' },
+              { icon: '📢', title: 'Share your work',    desc: 'Post updates, projects and opportunities' },
             ].map(({ icon, title, desc }) => (
               <div key={title} className="login__feature">
                 <span className="login__feature-icon">{icon}</span>
@@ -95,14 +88,11 @@ function Login() {
           </div>
         </div>
 
-        {/* Right - Form */}
         <div className="login__card">
           <h2 className="login__card-title">Sign in</h2>
           <p className="login__card-subtitle">Stay updated on your creative world</p>
 
-          {error && (
-            <div className="auth-error">{error}</div>
-          )}
+          {error && <div className="auth-error">{error}</div>}
 
           <div className="login__form">
             <div>
@@ -123,9 +113,7 @@ function Login() {
                 className="login__input"
               />
               <div className="login__forgot-row">
-                <Link to="/forgot-password" className="login__forgot-link">
-                  Forgot password?
-                </Link>
+                <Link to="/forgot-password" className="login__forgot-link">Forgot password?</Link>
               </div>
             </div>
 
@@ -155,7 +143,7 @@ function Login() {
               <div className="login__google-divider-bar" />
             </div>
             <a
-              href={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}/oauth2/authorization/google`}
+              href={`${process.env.REACT_APP_API_URL || 'http://localhost:8080'}/oauth2/authorization/google`}
               className="login__google-btn"
             >
               <img src="https://www.google.com/favicon.ico" alt="Google" className="login__google-icon" />

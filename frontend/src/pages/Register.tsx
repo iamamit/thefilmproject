@@ -1,40 +1,46 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
+import { roleColors } from '../utils/roleColors';
+import { UserRole } from '../types/enums';
 import './Register.css';
 
-const ROLES = ['DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
+const ROLES: UserRole[] = ['DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 const LANGUAGES = ['Hindi', 'English', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Marathi', 'Bengali', 'Punjabi', 'Gujarati'];
 
-const roleColors = {
-  DIRECTOR: '#0a66c2', EDITOR: '#0073b1', MUSICIAN: '#9b59b6',
-  PRODUCER: '#f39c12', ACTOR: '#1abc9c', CINEMATOGRAPHER: '#e67e22',
-  VFX_ARTIST: '#3498db', WRITER: '#2ecc71'
-};
+interface RegisterForm {
+  fullName: string;
+  email: string;
+  password: string;
+  username: string;
+  roles: UserRole[];
+  city: string;
+  country: string;
+  languages: string[];
+}
 
 function Register() {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<RegisterForm>({
     fullName: '', email: '', password: '', username: '',
-    roles: [], city: '', country: 'India', languages: []
+    roles: [], city: '', country: 'India', languages: [],
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const update = (field, value) => setForm({ ...form, [field]: value });
+  const update = <K extends keyof RegisterForm>(field: K, value: RegisterForm[K]) =>
+    setForm(f => ({ ...f, [field]: value }));
 
-  const toggleRole = (role) => {
+  const toggleRole = (role: UserRole) =>
     update('roles', form.roles.includes(role)
       ? form.roles.filter(r => r !== role)
       : [...form.roles, role]);
-  };
 
-  const toggleLang = (lang) => {
+  const toggleLang = (lang: string) =>
     update('languages', form.languages.includes(lang)
       ? form.languages.filter(l => l !== lang)
       : [...form.languages, lang]);
-  };
 
   const nextStep = () => {
     if (step === 1) {
@@ -60,7 +66,7 @@ function Register() {
       localStorage.setItem('userId', res.data.id);
       sessionStorage.setItem('pendingVerificationEmail', form.email);
       navigate('/check-email');
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data || 'Registration failed');
       setStep(1);
     } finally { setLoading(false); }
@@ -68,8 +74,6 @@ function Register() {
 
   return (
     <div className="register__page">
-
-      {/* Top bar */}
       <div className="register__topbar">
         <Link to="/" className="register__logo">
           <span className="register__logo-icon">🎬</span>
@@ -81,11 +85,8 @@ function Register() {
         </div>
       </div>
 
-      {/* Main */}
       <div className="register__main">
         <div className="register__card">
-
-          {/* Progress */}
           <div className="register__progress">
             {[1, 2, 3].map(s => (
               <div
@@ -102,11 +103,8 @@ function Register() {
             {step === 1 ? "Join India's film creator network" : step === 2 ? 'Select your roles (choose all that apply)' : 'A few more details'}
           </p>
 
-          {error && (
-            <div className="auth-error">{error}</div>
-          )}
+          {error && <div className="auth-error">{error}</div>}
 
-          {/* Step 1 */}
           {step === 1 && (
             <div className="register__fields">
               <div className="register__grid-2">
@@ -135,7 +133,6 @@ function Register() {
             </div>
           )}
 
-          {/* Step 2 - Roles */}
           {step === 2 && (
             <div>
               <div className="register__roles">
@@ -166,7 +163,6 @@ function Register() {
             </div>
           )}
 
-          {/* Step 3 - Location & Languages */}
           {step === 3 && (
             <div className="register__step3-fields">
               <div className="register__grid-2">

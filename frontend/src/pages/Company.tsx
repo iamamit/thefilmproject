@@ -1,26 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
+import { Company as CompanyType } from '../types';
 import './Company.css';
 
-const typeColors = {
+const typeColors: Record<string, string> = {
   STUDIO: '#0a66c2', PRODUCTION_HOUSE: '#9b59b6', OTT: '#e74c3c',
-  AGENCY: '#f39c12', INDEPENDENT: '#2ecc71', PLATFORM: '#1abc9c'
+  AGENCY: '#f39c12', INDEPENDENT: '#2ecc71', PLATFORM: '#1abc9c',
 };
 
 function Company() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const [company, setCompany] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const { slug } = useParams<{ slug: string }>();
+  const navigate  = useNavigate();
+  const [company, setCompany] = useState<CompanyType | null>(null);
+  const [posts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
   const [followers, setFollowers] = useState(0);
-  const [activeTab, setActiveTab] = useState('posts');
-  const myId = parseInt(localStorage.getItem('userId'));
+  const [activeTab, setActiveTab] = useState<'posts' | 'about'>('posts');
+  const myId  = parseInt(localStorage.getItem('userId') ?? '0');
   const token = localStorage.getItem('token');
 
-  useEffect(() => { fetchCompany(); }, [slug]);
+  useEffect(() => { fetchCompany(); }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchCompany = async () => {
     try {
@@ -54,21 +55,14 @@ function Company() {
 
   if (!company) return null;
 
-  const typeColor = typeColors[company.type] || '#0a66c2';
-  const isOwner = company.createdBy && company.createdBy.id === myId;
+  const typeColor = typeColors[company.type ?? ''] || '#0a66c2';
+  const isOwner   = company.createdBy && company.createdBy.id === myId;
 
   const coverStyle = company.coverUrl
     ? { background: `url(${company.coverUrl}) center/cover` }
     : { background: `linear-gradient(135deg, ${typeColor}44, ${typeColor}22)` };
 
-  const logoStyle = company.logoUrl
-    ? {}
-    : { background: typeColor };
-
-  const typeBadgeStyle = {
-    background: typeColor + '22',
-    color: typeColor,
-  };
+  const logoStyle = company.logoUrl ? {} : { background: typeColor };
 
   return (
     <div className="company">
@@ -94,7 +88,7 @@ function Company() {
             </div>
             <div className="company__meta">
               {company.type && (
-                <span className="company__type-badge" style={typeBadgeStyle}>
+                <span className="company__type-badge" style={{ background: typeColor + '22', color: typeColor }}>
                   {company.type.replace('_', ' ')}
                 </span>
               )}
@@ -119,14 +113,14 @@ function Company() {
           </div>
         </div>
 
-        {company.bio && (
+        {company.description && (
           <div className="company__bio-card">
-            <p className="company__bio-text">{company.bio}</p>
+            <p className="company__bio-text">{company.description}</p>
           </div>
         )}
 
         <div className="company__tabs">
-          {['posts', 'about'].map(tab => (
+          {(['posts', 'about'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -154,7 +148,7 @@ function Company() {
         {activeTab === 'about' && (
           <div className="company__about-card">
             <h3 className="company__about-title">About {company.name}</h3>
-            {company.bio && <p className="company__about-bio">{company.bio}</p>}
+            {company.description && <p className="company__about-bio">{company.description}</p>}
             <div className="company__about-details">
               {company.type && <p className="company__about-detail">🏢 {company.type.replace('_', ' ')}</p>}
               {company.city && <p className="company__about-detail">📍 {company.city}, {company.country}</p>}

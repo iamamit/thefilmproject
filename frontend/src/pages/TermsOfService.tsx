@@ -15,9 +15,7 @@ function TermsOfService() {
           </Link>
         </div>
         <h1 className="terms__title">Terms of Service</h1>
-        <p className="terms__updated">
-          Last updated: March 2025
-        </p>
+        <p className="terms__updated">Last updated: March 2025</p>
 
         <h2 className="terms__section-title">1. Acceptance of Terms</h2>
         <p className="terms__paragraph">

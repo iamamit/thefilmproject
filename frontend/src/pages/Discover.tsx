@@ -1,27 +1,32 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { roleColors } from '../utils/roleColors';
+import { UserRole } from '../types/enums';
+import { User, Company } from '../types';
 import './Discover.css';
 
-const ROLES = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
+const ROLES: Array<UserRole | ''> = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 
-const roleColors = {
-  DIRECTOR: 'var(--accent)', EDITOR: '#4a90e2', MUSICIAN: '#9b59b6',
-  PRODUCER: '#f39c12', ACTOR: '#1abc9c', CINEMATOGRAPHER: '#e67e22',
-  VFX_ARTIST: '#3498db', WRITER: '#2ecc71'
-};
+type Tab = 'people' | 'companies';
+
+interface Filters {
+  role: UserRole | '';
+  city: string;
+  search: string;
+}
 
 function Discover() {
-  usePageMeta('Discover Creators', "Find directors, editors, musicians across India.");
+  usePageMeta('Discover Creators', 'Find directors, editors, musicians across India.');
   const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
-  const [companies, setCompanies] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('people');
-  const [filters, setFilters] = useState({ role: '', city: '', search: '' });
+  const [activeTab, setActiveTab] = useState<Tab>('people');
+  const [filters, setFilters] = useState<Filters>({ role: '', city: '', search: '' });
   const [companySearch, setCompanySearch] = useState('');
-  const token = localStorage.getItem('token');
+  const token    = localStorage.getItem('token');
   const username = localStorage.getItem('username');
   const fullName = localStorage.getItem('fullName');
 
@@ -29,16 +34,13 @@ function Discover() {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (filters.role) params.append('role', filters.role);
-      if (filters.city) params.append('city', filters.city);
+      if (filters.role)   params.append('role', filters.role);
+      if (filters.city)   params.append('city', filters.city);
       if (filters.search) params.append('search', filters.search);
       const res = await api.get(`/users/discover?${params}`);
       setUsers(res.data.content);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
   const fetchCompanies = async () => {
@@ -49,14 +51,13 @@ function Discover() {
     } catch {}
   };
 
-  useEffect(() => { fetchUsers(); }, []);
-  useEffect(() => { fetchCompanies(); }, []);
+  useEffect(() => { fetchUsers(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchCompanies(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="discover">
-      {/* Tabs */}
       <div className="discover__tabs">
-        {['people', 'companies'].map(tab => (
+        {(['people', 'companies'] as Tab[]).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -68,12 +69,10 @@ function Discover() {
       </div>
 
       <div className="discover__layout">
-
-        {/* Left Sidebar - Profile Card */}
+        {/* Left Sidebar */}
         <div className="discover__sidebar-left">
           {token ? (
             <div className="discover__card discover__card--static">
-              {/* Cover */}
               <div className="discover__profile-cover" />
               <div className="discover__profile-body">
                 <div className="discover__profile-avatar">
@@ -98,7 +97,6 @@ function Discover() {
             </div>
           )}
 
-          {/* Filters */}
           <div className="discover__card discover__card--static discover__filters">
             <p className="discover__filters-title">Filter Creators</p>
             <div className="discover__filters-group">
@@ -110,7 +108,7 @@ function Discover() {
               />
               <select
                 value={filters.role}
-                onChange={e => setFilters({ ...filters, role: e.target.value })}
+                onChange={e => setFilters({ ...filters, role: e.target.value as UserRole | '' })}
                 className="discover__filters-select"
               >
                 {ROLES.map(r => <option key={r} value={r}>{r || 'All Roles'}</option>)}
@@ -126,7 +124,7 @@ function Discover() {
           </div>
         </div>
 
-        {/* Center - Creator Feed / Companies */}
+        {/* Center */}
         <div>
           {activeTab === 'companies' ? (
             <div>
@@ -187,26 +185,21 @@ function Discover() {
               ) : (
                 <div className="discover__feed-list">
                   {users.map(user => {
-                    const primaryColor = roleColors[user.roles?.[0]] || 'var(--accent)';
-                    const secondaryColor = roleColors[user.roles?.[0]] || '#4a90e2';
+                    const primaryColor   = roleColors[user.roles?.[0] as UserRole] || 'var(--accent)';
+                    const secondaryColor = roleColors[user.roles?.[0] as UserRole] || '#4a90e2';
                     return (
                       <div
                         key={user.id}
                         className="discover__card"
                         onClick={() => navigate(`/profile/${user.username}`)}
                       >
-                        {/* Cover strip — gradient uses per-user role colour (runtime data) */}
                         <div
                           className="discover__creator-cover"
                           style={{ background: `linear-gradient(135deg, ${primaryColor}33, ${secondaryColor}22)` }}
                         />
                         <div className="discover__creator-body">
                           <div className="discover__creator-header">
-                            {/* Avatar background is per-role runtime colour */}
-                            <div
-                              className="discover__creator-avatar"
-                              style={{ background: primaryColor }}
-                            >
+                            <div className="discover__creator-avatar" style={{ background: primaryColor }}>
                               {user.fullName?.charAt(0)}
                             </div>
                             <div className="discover__creator-meta">
@@ -219,14 +212,13 @@ function Discover() {
 
                           <div className="discover__creator-roles">
                             {user.roles?.map(role => (
-                              /* Role badge colours are fully per-role data — kept as inline style */
                               <span
                                 key={role}
                                 className="discover__role-badge"
                                 style={{
-                                  background: `${roleColors[role]}22`,
-                                  color: roleColors[role],
-                                  border: `1px solid ${roleColors[role]}44`
+                                  background: `${roleColors[role as UserRole]}22`,
+                                  color: roleColors[role as UserRole],
+                                  border: `1px solid ${roleColors[role as UserRole]}44`,
                                 }}
                               >
                                 {role.replace('_', ' ')}
@@ -280,7 +272,6 @@ function Discover() {
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

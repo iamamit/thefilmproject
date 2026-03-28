@@ -15,9 +15,7 @@ function PrivacyPolicy() {
           </Link>
         </div>
         <h1 className="privacy__title">Privacy Policy</h1>
-        <p className="privacy__updated">
-          Last updated: March 2025
-        </p>
+        <p className="privacy__updated">Last updated: March 2025</p>
 
         <h2 className="privacy__section-title">1. Information We Collect</h2>
         <p className="privacy__paragraph">

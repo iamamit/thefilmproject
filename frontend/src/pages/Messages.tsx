@@ -1,24 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
+import { Message } from '../types';
 import './Messages.css';
 
+interface SelectedUser {
+  id: number;
+  fullName: string;
+  username?: string;
+}
+
 function Messages() {
-  const [inbox, setInbox] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [conversation, setConversation] = useState([]);
+  const [inbox, setInbox] = useState<Message[]>([]);
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
+  const [conversation, setConversation] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const myUsername = localStorage.getItem('username');
   const location = useLocation();
 
   useEffect(() => {
     fetchInbox();
-    // Check if coming from profile page with a user to message
     const params = new URLSearchParams(location.search);
-    const userId = params.get('user');
+    const userId   = params.get('user');
     const userName = params.get('name');
     if (userId && userName) {
       setSelectedUser({ id: parseInt(userId), fullName: userName });
@@ -37,20 +43,15 @@ function Messages() {
     try {
       const res = await api.get('/messages/inbox');
       setInbox(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   };
 
-  const fetchConversation = async (userId) => {
+  const fetchConversation = async (userId: number) => {
     try {
       const res = await api.get(`/messages/conversation/${userId}`);
       setConversation(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    } catch (err) { console.error(err); }
   };
 
   const sendMessage = async () => {
@@ -58,24 +59,19 @@ function Messages() {
     setSending(true);
     try {
       const res = await api.post(`/messages/send/${selectedUser.id}`, { content: newMessage });
-      setConversation([...conversation, res.data]);
+      setConversation(prev => [...prev, res.data]);
       setNewMessage('');
       fetchInbox();
-    } catch (err) {
+    } catch (err: any) {
       alert(err.response?.data || 'Could not send message');
-    } finally {
-      setSending(false);
-    }
+    } finally { setSending(false); }
   };
 
-  const getOtherUser = (message) => {
-    return message.sender.username === myUsername ? message.receiver : message.sender;
-  };
+  const getOtherUser = (message: Message): SelectedUser =>
+    message.sender.username === myUsername ? message.receiver : message.sender;
 
   return (
     <div className="messages">
-
-      {/* Inbox Sidebar */}
       <div className="messages__sidebar">
         <div className="messages__sidebar-header">
           <h2 className="messages__sidebar-title">💬 Messages</h2>
@@ -87,29 +83,26 @@ function Messages() {
           <p className="messages__inbox-empty">
             No messages yet. Go to a connection's profile and click Message!
           </p>
-        ) : (
-          inbox.map(msg => {
-            const other = getOtherUser(msg);
-            return (
-              <div
-                key={msg.id}
-                onClick={() => setSelectedUser(other)}
-                className={`messages__inbox-item${selectedUser?.id === other.id ? ' messages__inbox-item--active' : ''}`}
-              >
-                <div className="messages__inbox-row">
-                  <div className="messages__inbox-avatar">{other.fullName?.charAt(0)}</div>
-                  <div className="messages__inbox-text">
-                    <p className="messages__inbox-name">{other.fullName}</p>
-                    <p className="messages__inbox-preview">{msg.content}</p>
-                  </div>
+        ) : inbox.map(msg => {
+          const other = getOtherUser(msg);
+          return (
+            <div
+              key={msg.id}
+              onClick={() => setSelectedUser(other)}
+              className={`messages__inbox-item${selectedUser?.id === other.id ? ' messages__inbox-item--active' : ''}`}
+            >
+              <div className="messages__inbox-row">
+                <div className="messages__inbox-avatar">{other.fullName?.charAt(0)}</div>
+                <div className="messages__inbox-text">
+                  <p className="messages__inbox-name">{other.fullName}</p>
+                  <p className="messages__inbox-preview">{msg.content}</p>
                 </div>
               </div>
-            );
-          })
-        )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* Chat Area */}
       <div className="messages__chat">
         {selectedUser ? (
           <>

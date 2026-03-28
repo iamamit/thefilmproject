@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
+import { Notification } from '../types';
+import { timeAgo } from '../utils/timeAgo';
 import './Notifications.css';
 
-const notifIcons = {
+const notifIcons: Record<string, string> = {
   LIKE: '❤️',
   COMMENT: '💬',
   REPLY: '↩️',
@@ -12,16 +14,8 @@ const notifIcons = {
   PORTFOLIO_COMMENT: '🎬',
 };
 
-function timeAgo(dateStr) {
-  const diff = (new Date() - new Date(dateStr)) / 1000;
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-  return Math.floor(diff / 86400) + 'd ago';
-}
-
 function Notifications() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -46,15 +40,13 @@ function Notifications() {
     } catch {}
   };
 
-  const handleClick = async (notif) => {
-    // Mark as read
+  const handleClick = async (notif: Notification) => {
     if (!notif.isRead) {
       try {
         await api.patch(`/notifications/${notif.id}/read`);
         setNotifications(notifications.map(n => n.id === notif.id ? { ...n, isRead: true } : n));
       } catch {}
     }
-    // Navigate to relevant page
     if (notif.referenceType === 'POST' && notif.referenceId) {
       navigate('/home');
     } else if (notif.referenceType === 'USER' && notif.referenceId) {
@@ -89,7 +81,6 @@ function Notifications() {
                 onClick={() => handleClick(notif)}
                 className={`notifications__item${notif.isRead ? ' notifications__item--read' : ' notifications__item--unread'}`}
               >
-                {/* Sender avatar */}
                 <div className="notifications__avatar">
                   {notif.sender?.profilePhotoUrl
                     ? <img src={notif.sender.profilePhotoUrl} alt="" className="notifications__avatar-img" />
@@ -99,15 +90,14 @@ function Notifications() {
                   </span>
                 </div>
 
-                {/* Message */}
                 <div className="notifications__body">
                   <p className="notifications__message">
-                    <strong>{notif.sender?.fullName}</strong> {notif.message.replace(notif.sender?.fullName + ' ', '')}
+                    <strong>{notif.sender?.fullName}</strong>{' '}
+                    {notif.message.replace((notif.sender?.fullName ?? '') + ' ', '')}
                   </p>
                   <p className="notifications__time">{timeAgo(notif.createdAt)}</p>
                 </div>
 
-                {/* Unread dot */}
                 {!notif.isRead && <div className="notifications__unread-dot" />}
               </div>
             ))}

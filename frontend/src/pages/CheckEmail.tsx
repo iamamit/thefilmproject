@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
 import { usePageMeta } from '../hooks/usePageMeta';
 import './CheckEmail.css';
 
@@ -22,9 +22,7 @@ function CheckEmail() {
     <div className="check-email">
       <div className="check-email__card">
         <span className="check-email__icon">📬</span>
-        <h2 className="check-email__title">
-          Check your inbox
-        </h2>
+        <h2 className="check-email__title">Check your inbox</h2>
         <p className="check-email__body">
           We sent a verification link to <strong>{email || 'your email'}</strong>.
           Click the link to activate your account.
@@ -32,10 +30,7 @@ function CheckEmail() {
         <p className="check-email__hint">
           Didn't get it? Check your spam folder or{' '}
           {email ? (
-            <button
-              onClick={handleResend}
-              className="check-email__resend-btn"
-            >
+            <button onClick={handleResend} className="check-email__resend-btn">
               resend the email
             </button>
           ) : 'try again.'}

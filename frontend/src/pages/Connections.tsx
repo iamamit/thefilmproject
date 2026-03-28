@@ -1,27 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
+import { Connection } from '../types';
 import './Connections.css';
+
+type Tab = 'connections' | 'pending' | 'sent';
 
 function Connections() {
   const navigate = useNavigate();
-  const [connections, setConnections] = useState([]);
-  const [pending, setPending] = useState([]);
-  const [sent, setSent] = useState([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
+  const [pending, setPending] = useState<Connection[]>([]);
+  const [sent, setSent] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('connections');
+  const [activeTab, setActiveTab] = useState<Tab>('connections');
   const myUsername = localStorage.getItem('username');
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { fetchAll(); }, []);
 
   const fetchAll = async () => {
     try {
       const [connRes, pendingRes, sentRes] = await Promise.all([
         api.get('/connections'),
         api.get('/connections/pending'),
-        api.get('/connections/sent')
+        api.get('/connections/sent'),
       ]);
       setConnections(connRes.data);
       setPending(pendingRes.data);
@@ -33,7 +34,7 @@ function Connections() {
     }
   };
 
-  const respond = async (id, accept) => {
+  const respond = async (id: number, accept: boolean) => {
     try {
       await api.patch(`/connections/${id}/respond?accept=${accept}`);
       fetchAll();
@@ -42,9 +43,8 @@ function Connections() {
     }
   };
 
-  const getOtherUser = (conn) => {
-    return conn.sender.username === myUsername ? conn.receiver : conn.sender;
-  };
+  const getOtherUser = (conn: Connection) =>
+    conn.sender.username === myUsername ? conn.receiver : conn.sender;
 
   if (loading) return (
     <div className="connections__loading">
@@ -58,29 +58,22 @@ function Connections() {
         <h2 className="connections__heading">My Network</h2>
         <p className="connections__subheading">Manage your connections</p>
 
-        {/* Tabs */}
         <div className="connections__tabs">
-          <button
-            className={`connections__tab${activeTab === 'connections' ? ' connections__tab--active' : ''}`}
-            onClick={() => setActiveTab('connections')}
-          >
-            🤝 Connected ({connections.length})
-          </button>
-          <button
-            className={`connections__tab${activeTab === 'pending' ? ' connections__tab--active' : ''}`}
-            onClick={() => setActiveTab('pending')}
-          >
-            ⏳ Pending ({pending.length})
-          </button>
-          <button
-            className={`connections__tab${activeTab === 'sent' ? ' connections__tab--active' : ''}`}
-            onClick={() => setActiveTab('sent')}
-          >
-            📤 Sent ({sent.length})
-          </button>
+          {([
+            ['connections', `🤝 Connected (${connections.length})`],
+            ['pending',     `⏳ Pending (${pending.length})`],
+            ['sent',        `📤 Sent (${sent.length})`],
+          ] as [Tab, string][]).map(([tab, label]) => (
+            <button
+              key={tab}
+              className={`connections__tab${activeTab === tab ? ' connections__tab--active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Connections Tab */}
         {activeTab === 'connections' && (
           <div className="connections__list">
             {connections.length === 0 ? (
@@ -121,7 +114,6 @@ function Connections() {
           </div>
         )}
 
-        {/* Pending Tab */}
         {activeTab === 'pending' && (
           <div className="connections__list">
             {pending.length === 0 ? (
@@ -135,19 +127,14 @@ function Connections() {
                   {conn.sender.city && <p className="connections__city">📍 {conn.sender.city}</p>}
                 </div>
                 <div className="connections__actions">
-                  <button onClick={() => respond(conn.id, true)} className="connections__btn--accept">
-                    ✅ Accept
-                  </button>
-                  <button onClick={() => respond(conn.id, false)} className="connections__btn--decline">
-                    ❌ Decline
-                  </button>
+                  <button onClick={() => respond(conn.id, true)} className="connections__btn--accept">✅ Accept</button>
+                  <button onClick={() => respond(conn.id, false)} className="connections__btn--decline">❌ Decline</button>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Sent Tab */}
         {activeTab === 'sent' && (
           <div className="connections__list">
             {sent.length === 0 ? (

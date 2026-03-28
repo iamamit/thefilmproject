@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import api from '../api';
+import api from '../utils/api';
 import { usePageMeta } from '../hooks/usePageMeta';
 import './ResetPassword.css';
 
@@ -14,7 +14,7 @@ function ResetPassword() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (newPassword !== confirmPassword) {
@@ -29,7 +29,7 @@ function ResetPassword() {
     try {
       await api.post('/auth/reset-password', { token, newPassword });
       setSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.error || 'Invalid or expired reset link. Please request a new one.');
     } finally {
       setLoading(false);
@@ -43,27 +43,17 @@ function ResetPassword() {
 
         {success ? (
           <div>
-            <p className="reset__success-text">
-              ✅ Password updated successfully!
-            </p>
-            <Link to="/login" className="reset__signin-link">
-              Sign In
-            </Link>
+            <p className="reset__success-text">✅ Password updated successfully!</p>
+            <Link to="/login" className="reset__signin-link">Sign In</Link>
           </div>
         ) : !token ? (
           <div>
-            <div className="auth-error">
-              Invalid reset link. Please request a new one.
-            </div>
-            <Link to="/forgot-password" className="reset__invalid-link">
-              Request new link
-            </Link>
+            <div className="auth-error">Invalid reset link. Please request a new one.</div>
+            <Link to="/forgot-password" className="reset__invalid-link">Request new link</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="auth-error">{error}</div>
-            )}
+            {error && <div className="auth-error">{error}</div>}
 
             <input
               type="password"
