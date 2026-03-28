@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 function Login() {
+  usePageMeta('Sign In');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -139,6 +141,11 @@ function Login() {
                 onFocus={e => e.target.style.border = '1px solid var(--accent)'}
                 onBlur={e => e.target.style.border = '1px solid #c0c0c0'}
               />
+              <div style={{ textAlign: 'right', marginTop: '0.4rem' }}>
+                <Link to="/forgot-password" style={{ color: 'var(--accent)', fontSize: '0.8rem', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             <button onClick={handleSubmit} disabled={loading} style={{
@@ -174,6 +181,12 @@ function Login() {
             Continue with Google
           </a>
         </div>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '1.5rem' }}>
+          By signing in, you agree to our{' '}
+          <Link to="/terms" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Terms</Link>
+          {' '}&{' '}
+          <Link to="/privacy" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Privacy Policy</Link>
+        </p>
         </div>
       </div>
     </div>

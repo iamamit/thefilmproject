@@ -57,7 +57,8 @@ function Register() {
       localStorage.setItem('username', res.data.username);
       localStorage.setItem('fullName', res.data.fullName);
       localStorage.setItem('userId', res.data.id);
-      navigate('/home');
+      sessionStorage.setItem('pendingVerificationEmail', form.email);
+      navigate('/check-email');
     } catch (err) {
       setError(err.response?.data || 'Registration failed');
       setStep(1);
@@ -249,7 +250,10 @@ function Register() {
           )}
 
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '1.5rem' }}>
-            By joining, you agree to our Terms & Privacy Policy
+            By joining, you agree to our{' '}
+            <Link to="/terms" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Terms of Service</Link>
+            {' '}&{' '}
+            <Link to="/privacy" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Privacy Policy</Link>
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const ROLES = ['', 'DIRECTOR', 'EDITOR', 'MUSICIAN', 'PRODUCER', 'ACTOR', 'CINEMATOGRAPHER', 'VFX_ARTIST', 'WRITER'];
 
@@ -11,6 +12,7 @@ const roleColors = {
 };
 
 function Discover() {
+  usePageMeta('Discover Creators', "Find directors, editors, musicians across India.");
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [companies, setCompanies] = useState([]);

@@ -110,6 +110,22 @@ function EditProfile() {
     border: '1px solid var(--border)', padding: '1.5rem', marginBottom: '1rem',
   };
 
+  const calcCompletion = () => {
+    if (!user) return 0;
+    const checks = [
+      !!user.fullName && user.fullName.trim().length > 0,
+      !!user.bio && user.bio.trim().length > 10,
+      !!user.city && user.city.trim().length > 0,
+      !!user.country && user.country.trim().length > 0,
+      Array.isArray(user.roles) && user.roles.length > 0,
+      Array.isArray(user.languages) && user.languages.length > 0,
+      Array.isArray(skills) && skills.length > 0,
+      !!user.profilePhotoUrl && user.profilePhotoUrl.length > 0,
+    ];
+    return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+  };
+  const completionPct = calcCompletion();
+
   if (!user) return (
     <div style={{ background: 'var(--bg-primary)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p style={{ color: 'var(--text-secondary)' }}>Loading...</p>
@@ -136,6 +152,28 @@ function EditProfile() {
               padding: '0.5rem 1.5rem', borderRadius: '20px', cursor: 'pointer',
               fontSize: '0.875rem', fontWeight: '600', transition: 'background 0.3s',
             }}>{saved ? '✅ Saved!' : saving ? 'Saving...' : 'Save Changes'}</button>
+          </div>
+        </div>
+
+        {/* Profile Completion Bar */}
+        <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              Profile {completionPct}% complete
+              {completionPct < 100 && ' — complete your profile to get discovered'}
+            </span>
+            <span style={{ fontSize: '0.85rem', color: completionPct === 100 ? '#27ae60' : 'var(--accent)', fontWeight: '600' }}>
+              {completionPct}%
+            </span>
+          </div>
+          <div style={{ background: 'var(--border)', borderRadius: '4px', height: '6px' }}>
+            <div style={{
+              width: `${completionPct}%`,
+              height: '100%',
+              borderRadius: '4px',
+              background: completionPct === 100 ? '#27ae60' : 'var(--accent)',
+              transition: 'width 0.4s ease',
+            }} />
           </div>
         </div>
 
@@ -166,9 +204,17 @@ function EditProfile() {
               <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: '500', display: 'block', marginBottom: '0.4rem' }}>Bio / Tagline</label>
               <textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })}
                 placeholder="e.g. Independent filmmaker based in Mumbai"
-                rows={3} style={{ ...inputStyle, resize: 'vertical' }}
+                rows={3} maxLength={500} style={{ ...inputStyle, resize: 'vertical' }}
                 onFocus={e => e.target.style.border = '1px solid var(--accent)'}
                 onBlur={e => e.target.style.border = '1px solid var(--border)'} />
+              <div style={{
+                textAlign: 'right',
+                fontSize: '0.75rem',
+                color: (form.bio?.length || 0) > 450 ? '#cc0000' : 'var(--text-muted)',
+                marginTop: '0.25rem',
+              }}>
+                {form.bio?.length || 0}/500
+              </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
