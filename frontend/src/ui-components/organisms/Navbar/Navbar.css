@@ -1,0 +1,239 @@
+/* ============================================================
+   Navbar.css — BEM styles for the Navbar component
+   ============================================================ */
+
+/* ── Root nav bar ───────────────────────────────────────── */
+
+.navbar {
+  background: var(--bg-card);
+  padding: 0 2rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+/* ── Left section: logo + search ───────────────────────── */
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.navbar__logo-icon {
+  font-size: 1.4rem;
+}
+
+.navbar__logo-text {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.navbar__search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  min-width: 200px;
+}
+
+.navbar__search-icon {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.navbar__search-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+/* ── Center section: nav links ──────────────────────────── */
+
+.navbar__links {
+  display: flex;
+  gap: 0.2rem;
+  align-items: center;
+}
+
+.navbar__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.3rem 1rem;
+  text-decoration: none;
+  gap: 0.1rem;
+  transition: all 0.2s;
+  min-width: 60px;
+  height: 56px;
+  justify-content: center;
+}
+
+.navbar__link--active {
+  border-bottom: 2px solid var(--accent);
+  color: var(--text-primary);
+}
+
+.navbar__link--inactive {
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+}
+
+.navbar__link-icon {
+  font-size: 1.1rem;
+}
+
+.navbar__link-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* ── Right section: actions ─────────────────────────────── */
+
+.navbar__right {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+.navbar__theme-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Bell / notifications */
+.navbar__bell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.4rem;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.navbar__bell-icon {
+  font-size: 1.2rem;
+}
+
+.navbar__bell-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #e74c3c;
+  color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Profile nav link */
+.navbar__profile-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  text-decoration: none;
+  padding: 0.3rem 0.8rem;
+  height: 56px;
+  justify-content: center;
+}
+
+.navbar__profile-link--active {
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--accent);
+}
+
+.navbar__profile-link--inactive {
+  color: var(--text-secondary);
+  border-bottom: 2px solid transparent;
+}
+
+.navbar__profile-photo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navbar__profile-initial {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.navbar__profile-me-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* Logout button */
+.navbar__btn-logout {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Guest links */
+.navbar__link-signin {
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navbar__link-join {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}

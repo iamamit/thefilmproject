@@ -1,0 +1,19 @@
+.app-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .app-layout { grid-template-columns: 200px 1fr; }
+  .app-layout__right { display: none; }
+}
+
+@media (max-width: 640px) {
+  .app-layout { grid-template-columns: 1fr; }
+  .app-layout__left { display: none; }
+}
