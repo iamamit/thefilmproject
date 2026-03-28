@@ -102,7 +102,12 @@ public class UserController {
     }
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(401).build();
+        User caller = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (!caller.getId().equals(id)) return ResponseEntity.status(403).build();
         if (!userRepository.existsById(id)) return ResponseEntity.notFound().build();
         // Delete in reverse dependency order
         messageRepository.deleteBySenderIdOrReceiverId(id, id);

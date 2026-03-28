@@ -46,10 +46,15 @@ public class CommentController {
         User author = userRepo.findByEmail(auth.getName()).orElseThrow();
         Post post = postRepo.findById(postId).orElseThrow();
 
+        String content = (String) body.get("content");
+        if (content == null || content.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Comment content cannot be empty");
+        }
+
         Comment comment = new Comment();
         comment.setPost(post);
         comment.setAuthor(author);
-        comment.setContent((String) body.get("content"));
+        comment.setContent(content.trim());
         comment.setIsRead(false);
 
         Comment parentComment = null;

@@ -36,7 +36,7 @@ function App() {
         <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/notifications" element={<Notifications />} />
-        <Route path="/profile/:username" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/profile/:username" element={<Profile />} />
         <Route path="/edit-profile" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
         <Route path="/connections" element={<PrivateRoute><Connections /></PrivateRoute>} />
